@@ -71,8 +71,8 @@
           const text = await response.text(); // ✅ Read response as text
           const data = JSON.parse(text); // ✅ Manually parse JSON
           console.log(data);
-          if (data.status === "success" && data.appointmentId) {
-            alert(`Success! Appointment ID: ${data.appointmentId}`);
+          if (data.status === "success" && data.id) {
+            alert(`Success! Appointment ID: ${data.id}`);
           } else if (data.status === "duplicate") {
             alert("Error: This appointment already exists.");
           } else {
