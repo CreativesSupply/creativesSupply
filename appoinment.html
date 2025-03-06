@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Booking</title>
+</head>
+<body>
+    <h2>Book an Appointment</h2>
+    <form id="bookingForm">
+        <input type="text" id="name" placeholder="Your Name" required>
+        <input type="text" id="phone" placeholder="Your Phone Number" required>
+        <input type="date" id="date" required>
+        <input type="time" id="time" required>
+        <input type="number" id="people" placeholder="Number of People" required>
+        <input type="number" id="payment" placeholder="Payment Amount" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById("bookingForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const formData = {
+                name: document.getElementById("name").value,
+                phone: document.getElementById("phone").value,
+                date: document.getElementById("date").value,
+                time: document.getElementById("time").value,
+                people: document.getElementById("people").value,
+                payment: document.getElementById("payment").value
+            };
+
+            fetch("https://script.google.com/macros/s/AKfycbyTcNGguiIYxutu_L-eXiRgBnmi_1TiPv0kb-RoTOCXK6XkEkNWH2GbjiRIheOQMBJm6g/exec", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => alert("Appointment booked! Your ID: " + data.id));
+        });
+    </script>
+</body>
+</html>
