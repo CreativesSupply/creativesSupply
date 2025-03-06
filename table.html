@@ -1,170 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Booking Slots</title>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid black;
-            text-align: center;
-            padding: 8px;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
-        .booked {
-            background-color: red;
-            color: white;
-            font-weight: bold;
-        }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid black;
+        text-align: center;
+        padding: 8px;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      .booked {
+        background-color: red;
+        color: white;
+        font-weight: bold;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h2>Available Slots</h2>
     <table id="slotsTable">
-        <thead id="tableHead">
-            <tr>
-                <th>Time</th>
-            </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
+      <thead id="tableHead">
+        <tr>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
     </table>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbwXVOV3mNmsEytRQQ1P4TY9JlCAFY2RaMUypcQAqKvoRxg3qMiqi63ZkJRKBQJOvji7KQ/exec"; // Replace with your actual API URL
+      const API_URL =
+        "https://script.google.com/macros/s/AKfycbwXVOV3mNmsEytRQQ1P4TY9JlCAFY2RaMUypcQAqKvoRxg3qMiqi63ZkJRKBQJOvji7KQ/exec"; // Replace with your actual API URL
 
-        // Convert "7March" to YYYY-MM-DD format
-        function parseCustomDate(dateString) {
-            const months = {
-                "January": "01", "February": "02", "March": "03", "April": "04",
-                "May": "05", "June": "06", "July": "07", "August": "08",
-                "September": "09", "October": "10", "November": "11", "December": "12"
-            };
+      // Convert "7March" to YYYY-MM-DD format
+      function parseCustomDate(dateString) {
+        const months = {
+          January: "01",
+          February: "02",
+          March: "03",
+          April: "04",
+          May: "05",
+          June: "06",
+          July: "07",
+          August: "08",
+          September: "09",
+          October: "10",
+          November: "11",
+          December: "12",
+        };
 
-            let match = dateString.match(/^(\d+)([A-Za-z]+)$/);
-            if (!match) return null; // Invalid format
+        let match = dateString.match(/^(\d+)([A-Za-z]+)$/);
+        if (!match) return null; // Invalid format
 
-            let day = match[1].padStart(2, "0"); // Ensure two-digit day
-            let month = months[match[2]];
-            let year = new Date().getFullYear(); // Assume current year
+        let day = match[1].padStart(2, "0"); // Ensure two-digit day
+        let month = months[match[2]];
+        let year = new Date().getFullYear(); // Assume current year
 
-            return `${year}-${month}-${day}`;
+        return `${year}-${month}-${day}`;
+      }
+
+      // Convert "415AM" to "04:15 AM"
+      function parseCustomTime(timeString) {
+        let match = timeString.match(/^(\d{1,2})(\d{2})(AM|PM)$/);
+        if (!match) return null;
+
+        let hours = parseInt(match[1]);
+        let minutes = match[2];
+        let period = match[3];
+
+        if (period === "PM" && hours !== 12) hours += 12;
+        if (period === "AM" && hours === 12) hours = 0;
+
+        return `${String(hours).padStart(2, "0")}:${minutes}`;
+      }
+
+      function convertTo12HourFormat(time24) {
+        if (!time24) return null; // Handle missing/null values
+        let [hour, minute] = time24.split(":");
+        hour = parseInt(hour);
+        let period = hour >= 12 ? "PM" : "AM";
+        hour = hour % 12 || 12; // Convert 0 to 12 for AM
+        return `${hour}:${minute} ${period}`;
+      }
+
+      // Generate dates from today to April 10
+      function getDateRange() {
+        let today = new Date("2025-03-07");
+        let endDate = new Date("2025-03-07");
+        let dateArray = [];
+
+        while (today <= endDate) {
+          let formattedDate = today.toISOString().split("T")[0]; // YYYY-MM-DD format
+          dateArray.push(formattedDate);
+          today.setDate(today.getDate() + 1);
         }
+        return dateArray;
+      }
 
-        // Convert "415AM" to "04:15 AM"
-        function parseCustomTime(timeString) {
-            let match = timeString.match(/^(\d{1,2})(\d{2})(AM|PM)$/);
-            if (!match) return null;
+      // Generate time slots (adjust as needed)
+      function getTimeSlots() {
+        return [
+          "09:30 AM",
+          "09:50 AM",
+          "10:10 AM",
+          "10:30 AM",
+          "10:50 AM",
+          "11:10 AM",
+          "11:30 AM",
+          "11:50 AM",
+          "12:10 PM",
+          "12:30 PM",
+          "12:50 PM",
+          "1:10 PM",
+          "1:30 PM",
+          "1:50 PM",
+          "10:10 PM",
+          "2:30 PM",
+          "2:50 PM",
+          "3:10 PM",
+          "3:30 PM",
+          "3:50 PM",
+          "4:10 PM",
+          "4:30 PM",
+          "4:50 PM",
+          "5:10 PM",
+          "5:30 PM",
+          "5:50 PM",
+          "6:10 PM",
+          "6:30 PM",
+          "6:50 PM",
+          "7:10 PM",
+          "7:30 PM",
+          "7:50 PM",
+          "8:10 PM",
+          "8:30 PM",
+          "8:50 PM",
+          "9:10 PM",
+          "9:30 PM",
+          "9:50 PM",
+          "10:10 PM",
+          "10:30 PM",
+          "10:50 PM",
+          "11:10 PM",
+          "11:30 PM",
+          "11:50 PM",
+        ];
+      }
 
-            let hours = parseInt(match[1]);
-            let minutes = match[2];
-            let period = match[3];
+      // Fetch bookings from API
+      async function fetchBookings() {
+        try {
+          let response = await fetch(API_URL);
+          let result = await response.json();
 
-            if (period === "PM" && hours !== 12) hours += 12;
-            if (period === "AM" && hours === 12) hours = 0;
-
-            return `${String(hours).padStart(2, "0")}:${minutes}`;
+          if (result.status === "success") {
+            // console.log(result.data);
+            return result.data.map((b) => ({
+              date: parseCustomDate(b.date),
+              time: parseCustomTime(b.time),
+            }));
+          } else {
+            console.error("Failed to fetch bookings");
+            return [];
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          return [];
         }
+      }
 
-        // Generate dates from today to April 10
-        function getDateRange() {
-            let today = new Date();
-            let endDate = new Date("2025-04-10");
-            let dateArray = [];
+      // Build table
+      async function buildTable() {
+        let dates = getDateRange();
+        let timeSlots = getTimeSlots();
+        let bookings = await fetchBookings();
+        console.log(bookings);
+        let tableHead = document.getElementById("tableHead");
+        let tableBody = document.getElementById("tableBody");
 
-            while (today <= endDate) {
-                let formattedDate = today.toISOString().split("T")[0]; // YYYY-MM-DD format
-                dateArray.push(formattedDate);
-                today.setDate(today.getDate() + 1);
-            }
-            return dateArray;
-        }
+        // Clear previous table data
+        tableHead.innerHTML = "<tr><th>Time</th></tr>";
+        tableBody.innerHTML = "";
 
-        // Generate time slots (adjust as needed)
-        function getTimeSlots() {
-            return [
-                "04:00 AM", "04:15 AM", "04:30 AM", "04:45 AM",
-                "08:00 AM", "09:00 AM", "10:00 AM", "11:00 AM",
-                "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM",
-                "04:00 PM", "05:00 PM", "06:00 PM", "07:00 PM"
-            ];
-        }
+        // Add date headers
+        let headerRow = tableHead.querySelector("tr");
+        dates.forEach((date) => {
+          let th = document.createElement("th");
+          th.textContent = date;
+          headerRow.appendChild(th);
+        });
 
-        // Fetch bookings from API
-        async function fetchBookings() {
-            try {
-                let response = await fetch(API_URL);
-                let result = await response.json();
+        // Create rows for each time slot
+        timeSlots.forEach((time) => {
+          let row = document.createElement("tr");
+          let timeCell = document.createElement("td");
+          timeCell.textContent = time;
+          row.appendChild(timeCell);
 
-                if (result.status === "success") {
-                    return result.data.map(b => ({
-                        date: parseCustomDate(b.date),
-                        time: parseCustomTime(b.time)
-                    }));
-                } else {
-                    console.error("Failed to fetch bookings");
-                    return [];
-                }
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                return [];
-            }
-        }
+          // Fill each date column
+          dates.forEach((date) => {
+            let cell = document.createElement("td");
+            let isBooked = bookings.some((b) => {
+              let bookedDate = b.date;
+              let bookedTime = convertTo12HourFormat(b.time); // Convert to 12-hour format
 
-        // Build table
-        async function buildTable() {
-            let dates = getDateRange();
-            let timeSlots = getTimeSlots();
-            let bookings = await fetchBookings();
+              console.log(
+                `Checking: Date(${bookedDate}) == ${date}, Time(${bookedTime}) == ${time}`
+              );
 
-            let tableHead = document.getElementById("tableHead");
-            let tableBody = document.getElementById("tableBody");
-
-            // Clear previous table data
-            tableHead.innerHTML = "<tr><th>Time</th></tr>";
-            tableBody.innerHTML = "";
-
-            // Add date headers
-            let headerRow = tableHead.querySelector("tr");
-            dates.forEach(date => {
-                let th = document.createElement("th");
-                th.textContent = date;
-                headerRow.appendChild(th);
+              return bookedDate === date && bookedTime === time;
             });
+            if (isBooked) {
+              cell.textContent = "Booked";
+              cell.classList.add("booked");
+            } else {
+              cell.textContent = "Available";
+            }
 
-            // Create rows for each time slot
-            timeSlots.forEach(time => {
-                let row = document.createElement("tr");
-                let timeCell = document.createElement("td");
-                timeCell.textContent = time;
-                row.appendChild(timeCell);
+            row.appendChild(cell);
+          });
 
-                // Fill each date column
-                dates.forEach(date => {
-                    let cell = document.createElement("td");
-                    let isBooked = bookings.some(b => b.date === date && b.time === time);
+          tableBody.appendChild(row);
+        });
+      }
 
-                    if (isBooked) {
-                        cell.textContent = "Booked";
-                        cell.classList.add("booked");
-                    } else {
-                        cell.textContent = "Available";
-                    }
-
-                    row.appendChild(cell);
-                });
-
-                tableBody.appendChild(row);
-            });
-        }
-
-        // Load table on page load
-        document.addEventListener("DOMContentLoaded", buildTable);
+      // Load table on page load
+      document.addEventListener("DOMContentLoaded", buildTable);
     </script>
-</body>
+  </body>
 </html>

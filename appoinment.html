@@ -17,47 +17,58 @@
             <h2 class="text-center mb-4">Book an Appointment</h2>
             <form id="bookingForm">
               <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
                 <input
                   type="text"
                   id="name"
                   class="form-control"
-                  placeholder="Naimah Nur"
                   required
                 />
               </div>
+
               <div class="mb-3">
+                <label for="phone" class="form-label">Phone Number</label>
                 <input
                   type="text"
                   id="phone"
                   class="form-control"
-                  placeholder="01123053082"
                   required
                 />
               </div>
+
               <div class="mb-3">
+                <label for="date" class="form-label">Select Date</label>
                 <input type="date" id="date" class="form-control" required />
               </div>
+
               <div class="mb-3">
-                <input type="time" id="time" class="form-control" required />
+                <label for="time" class="form-label">Select Time</label>
+                <select id="time" class="form-control" required>
+                  <option value="" disabled selected>Select Time</option>
+                </select>
               </div>
+
               <div class="mb-3">
+                <label for="people" class="form-label">Number of People</label>
                 <input
                   type="number"
                   id="people"
                   class="form-control"
-                  placeholder="Number of People"
+                  placeholder="10"
                   required
                 />
               </div>
+
               <div class="mb-3">
+                <label for="payment" class="form-label">Payment Amount(RM)</label>
                 <input
                   type="number"
                   id="payment"
                   class="form-control"
-                  placeholder="Payment Amount"
                   required
                 />
               </div>
+
               <button type="submit" class="btn btn-primary w-100">
                 Submit
               </button>
@@ -69,6 +80,63 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+      // List of time slots
+      const timeSlots = [
+        "09:30 AM",
+        "09:50 AM",
+        "10:10 AM",
+        "10:30 AM",
+        "10:50 AM",
+        "11:10 AM",
+        "11:30 AM",
+        "11:50 AM",
+        "12:10 PM",
+        "12:30 PM",
+        "12:50 PM",
+        "1:10 PM",
+        "1:30 PM",
+        "1:50 PM",
+        "2:10 PM",
+        "2:30 PM",
+        "2:50 PM",
+        "3:10 PM",
+        "3:30 PM",
+        "3:50 PM",
+        "4:10 PM",
+        "4:30 PM",
+        "4:50 PM",
+        "5:10 PM",
+        "5:30 PM",
+        "5:50 PM",
+        "6:10 PM",
+        "6:30 PM",
+        "6:50 PM",
+        "7:10 PM",
+        "7:30 PM",
+        "7:50 PM",
+        "8:10 PM",
+        "8:30 PM",
+        "8:50 PM",
+        "9:10 PM",
+        "9:30 PM",
+        "9:50 PM",
+        "10:10 PM",
+        "10:30 PM",
+        "10:50 PM",
+        "11:10 PM",
+        "11:30 PM",
+        "11:50 PM",
+      ];
+
+      // Populate the select dropdown
+      const timeSelect = document.getElementById("time");
+      timeSlots.forEach((time) => {
+        let option = document.createElement("option");
+        option.value = time;
+        option.textContent = time;
+        timeSelect.appendChild(option);
+      });
+
       async function submitAppointment(event) {
         event.preventDefault();
 
