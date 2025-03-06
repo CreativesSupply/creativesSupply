@@ -1,57 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Appointment Booking</title>
-</head>
-<body>
+  </head>
+  <body>
     <h2>Book an Appointment</h2>
     <form id="bookingForm">
-        <input type="text" id="name" placeholder="Your Name" required>
-        <input type="text" id="phone" placeholder="Your Phone Number" required>
-        <input type="date" id="date" required>
-        <input type="time" id="time" required>
-        <input type="number" id="people" placeholder="Number of People" required>
-        <input type="number" id="payment" placeholder="Payment Amount" required>
-        <button type="submit">Submit</button>
+      <input type="text" id="name" placeholder="Your Name" required />
+      <input type="text" id="phone" placeholder="Your Phone Number" required />
+      <input type="date" id="date" required />
+      <input type="time" id="time" required />
+      <input
+        type="number"
+        id="people"
+        placeholder="Number of People"
+        required
+      />
+      <input type="number" id="payment" placeholder="Payment Amount" required />
+      <button type="submit">Submit</button>
     </form>
 
     <script>
-        async function submitAppointment(event) {
-            event.preventDefault();
-    
-            const formData = {
-                name: document.querySelector("#name").value,
-                phone: document.querySelector("#phone").value,
-                date: document.querySelector("#date").value,
-                time: document.querySelector("#time").value,
-                people: document.querySelector("#people").value,
-                payment: document.querySelector("#payment").value
-            };
-    
-            try {
-                const response = await fetch("https://script.google.com/macros/s/AKfycbxd_t5ANp9exP7RGgN-9s_RvKi65iHiryZ2Ym6E942iMgfj1Kyu5AbbGWd1FGErgANbWw/exec", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "text/plain" // ✅ Fix CORS issue
-                    },
-                    body: JSON.stringify(formData)
-                });
-    
-                const text = await response.text(); // ✅ Read response as text
-                const data = JSON.parse(text); // ✅ Manually parse JSON
-    
-                alert("Success! Appointment ID: " + data.id);
-            } catch (error) {
-                console.error("Error:", error);
-                alert("Failed to submit. Please try again.");
+      async function submitAppointment(event) {
+        event.preventDefault();
+
+        const formData = {
+          name: document.querySelector("#name").value,
+          phone: document.querySelector("#phone").value,
+          date: document.querySelector("#date").value,
+          time: document.querySelector("#time").value,
+          people: document.querySelector("#people").value,
+          payment: document.querySelector("#payment").value,
+        };
+
+        try {
+          const response = await fetch(
+            "https://script.google.com/macros/s/AKfycbzu5Od5M5RTzflknrng9iHcTMc2wYDsqrUxW170uCQsnwY4VPtTwyFtre4HAYrmyZaojA/exec",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "text/plain;charset=utf-8", // Google suggests text/plain for Apps Script
+              },
+              body: JSON.stringify(formData),
             }
+          );
+
+          const data = await response.text(); // Get raw text response
+          console.log("Success:", data);
+          alert("Success! " + data);
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Failed to submit. Please try again.");
         }
-    
-        // Attach event listener to form submit
-        document.getElementById("bookingForm").addEventListener("submit", submitAppointment);
+      }
+
+      // Attach event listener to form submit
+      document
+        .getElementById("bookingForm")
+        .addEventListener("submit", submitAppointment);
     </script>
-    
-</body>
+  </body>
 </html>
