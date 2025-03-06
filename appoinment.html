@@ -46,7 +46,7 @@
 
             // ✅ Fetch available slots from Google Apps Script
             async function loadAvailableSlots() {
-                let response = await fetch("https://script.google.com/macros/s/YOUR_DEPLOYED_URL/exec");
+                let response = await fetch("https://script.google.com/macros/s/AKfycbxI6yFM3rhXopwCKmOavR8K2E_pFpSb1k4Odhxjxv48sIiouD4w3lmmDMShide68u6IeA/exec");
                 let availableSlots = await response.json();
 
                 timeDropdown.innerHTML = "";
