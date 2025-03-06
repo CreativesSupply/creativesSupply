@@ -154,19 +154,13 @@
         const month = dateObj.toLocaleString("en-US", { month: "long" }); // Get full month (March)
         const formattedDate = `${day}${month}`; // "7March"
 
-        // ✅ Convert Time to "320PM" format
-        const [hours, minutes] = timeInput.split(":");
-        let hourNum = parseInt(hours, 10);
-        const period = hourNum >= 12 ? "PM" : "AM"; // Determine AM/PM
-        hourNum = hourNum % 12 || 12; // Convert 24-hour to 12-hour format
-        const formattedTime = `${hourNum}${minutes}${period}`; // "320PM"
 
         // ✅ Final Data Object
         const formData = {
           name,
           phone,
           date: formattedDate,
-          time: formattedTime,
+          time: timeInput,
           people,
           payment,
         };
