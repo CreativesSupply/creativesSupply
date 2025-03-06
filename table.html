@@ -2,8 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Booking Slots</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Available Slots</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
     <style>
       table {
         width: 100%;
@@ -26,15 +31,20 @@
     </style>
   </head>
   <body>
-    <h2>Available Slots</h2>
-    <table id="slotsTable">
-      <thead id="tableHead">
-        <tr>
-          <th>Time</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    </table>
+    <div class="container mt-4">
+      <h2 class="text-center">Available Slots</h2>
+
+      <div class="table-responsive">
+        <table class="table table-bordered text-center">
+          <thead id="tableHead">
+            <tr>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
 
     <script>
       const API_URL =
@@ -93,12 +103,35 @@
 
       // Generate dates from today to April 10
       function getDateRange() {
-        let today = new Date("2025-03-07");
-        let endDate = new Date("2025-03-07");
+        let rawToday = new Date();
+        let today = new Date(rawToday.getTime() + 8 * 60 * 60 * 1000); // Add 8 hours
+        let endDate = new Date("2025-04-07");
         let dateArray = [];
 
         while (today <= endDate) {
           let formattedDate = today.toISOString().split("T")[0]; // YYYY-MM-DD format
+          dateArray.push(formattedDate);
+          today.setDate(today.getDate() + 1);
+        }
+        return dateArray;
+      }
+
+      function getHead() {
+        let rawToday = new Date();
+        let today = new Date(rawToday.getTime() + 8 * 60 * 60 * 1000); // Add 8 hours
+        let endDate = new Date("2025-04-07");
+        let dateArray = [];
+
+        while (today <= endDate) {
+          let options = {
+            day: "numeric",
+            month: "short",
+            timeZone: "Asia/Kuala_Lumpur",
+          };
+          let formattedDate = new Intl.DateTimeFormat("en-MY", options).format(
+            today
+          ); // "7 Mar", "8 Mar", etc.
+
           dateArray.push(formattedDate);
           today.setDate(today.getDate() + 1);
         }
@@ -180,6 +213,7 @@
       // Build table
       async function buildTable() {
         let dates = getDateRange();
+        let headers = getHead();
         let timeSlots = getTimeSlots();
         let bookings = await fetchBookings();
         console.log(bookings);
@@ -192,7 +226,7 @@
 
         // Add date headers
         let headerRow = tableHead.querySelector("tr");
-        dates.forEach((date) => {
+        headers.forEach((date) => {
           let th = document.createElement("th");
           th.textContent = date;
           headerRow.appendChild(th);
