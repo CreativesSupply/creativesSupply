@@ -20,7 +20,7 @@
     <script>
         async function submitAppointment(event) {
             event.preventDefault();
-
+    
             const formData = {
                 name: document.querySelector("#name").value,
                 phone: document.querySelector("#phone").value,
@@ -29,26 +29,29 @@
                 people: document.querySelector("#people").value,
                 payment: document.querySelector("#payment").value
             };
-
+    
             try {
                 const response = await fetch("https://script.google.com/macros/s/AKfycbwKy6N087i1VKNVat1Iv3Y0cnj5CdujznSGPys_sBYdRDlJj0o29Fq7Mc5V4D7Hk5Ln5A/exec", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "text/plain" // ✅ Fix CORS issue
                     },
                     body: JSON.stringify(formData)
                 });
-
-                const data = await response.json();
+    
+                const text = await response.text(); // ✅ Read response as text
+                const data = JSON.parse(text); // ✅ Manually parse JSON
+    
                 alert("Success! Appointment ID: " + data.id);
             } catch (error) {
                 console.error("Error:", error);
                 alert("Failed to submit. Please try again.");
             }
         }
-
+    
         // Attach event listener to form submit
         document.getElementById("bookingForm").addEventListener("submit", submitAppointment);
     </script>
+    
 </body>
 </html>
