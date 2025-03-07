@@ -23,24 +23,37 @@
       th {
         background-color: #f4f4f4;
       }
+      th:first-child,
+      td:first-child {
+        position: sticky;
+        left: 0;
+        background: #d1c3f1;
+        z-index: 2;
+      }
+
+      th:first-child {
+        z-index: 3; /* Ensure the header cell appears above other elements */
+      }
       .booked {
         background-color: red;
         color: blue;
-        text-decoration: underline;
+        /* text-decoration: underline; */
         font-weight: bold;
-        cursor: pointer;
+        /* cursor: pointer; */
       }
     </style>
   </head>
   <body>
     <div class="container mt-4">
-      <h2 class="text-center">Available Slots</h2>
+      <div class="d-flex justify-content-evenly mb-3">
+        <h2 class="text-center">Available Slots</h2>
+      </div>
 
       <div class="table-responsive">
         <table class="table table-bordered text-center">
           <thead id="tableHead">
             <tr>
-              <th>Time</th>
+              <th>Loading ...</th>
             </tr>
           </thead>
           <tbody id="tableBody"></tbody>
@@ -338,7 +351,7 @@
               cell.classList.add("booked");
 
               // ✅ Add click event to show booking details
-              cell.addEventListener("click", () => showBookingDetails(booking));
+              // cell.addEventListener("click", () => showBookingDetails(booking));
             } else {
               cell.textContent = "";
             }
