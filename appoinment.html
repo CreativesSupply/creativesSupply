@@ -54,9 +54,7 @@
               </div>
 
               <div class="mb-3">
-                <label for="package" class="form-label"
-                  >Package</label
-                >
+                <label for="package" class="form-label">Package</label>
                 <select id="package" class="form-control" required>
                   <option value="" disabled selected>Select Package</option>
                   <option value="Photoshot">Photoshot</option>
@@ -65,9 +63,7 @@
               </div>
 
               <div class="mb-3">
-                <label for="deposit" class="form-label"
-                  >Deposit(RM)</label
-                >
+                <label for="deposit" class="form-label">Deposit(RM)</label>
                 <input
                   type="number"
                   id="deposit"
@@ -89,9 +85,7 @@
               </div>
 
               <div class="mb-3">
-                <label for="promoter" class="form-label"
-                  >Promoter</label
-                >
+                <label for="promoter" class="form-label">Promoter</label>
                 <select id="promoter" class="form-control" required>
                   <option value="" disabled selected>Select Promoter</option>
                   <option value="Dayang">Dayang</option>
@@ -103,7 +97,8 @@
               <button type="submit" class="btn btn-primary w-100">
                 Submit
               </button>
-              <a href="dayang-yunk-photoshot-raya.html" target="_blank"><div class="btn btn-secondary w-100 mt-3">Appointments</div></a
+              <a href="dayang-yunk-photoshot-raya.html" target="_blank"
+                ><div class="btn btn-secondary w-100 mt-3">Appointments</div></a
               >
             </form>
           </div>
@@ -218,7 +213,7 @@
 
         try {
           const response = await fetch(
-            "https://script.google.com/macros/s/AKfycby_UUE8gwSiZD0qISQa0EdBJr7gq-dqXKtjUb5kdgtVwUbtD8nbJg892eccd8zmWyeL4g/exec",
+            "https://script.google.com/macros/s/AKfycbzNMZLxQJMeXOGsz7djdbJllkknX2Z3Ij1-IhCXSDWTREMLZRXe1h2eMOiBCX5vK5h3hw/exec",
             {
               method: "POST",
               headers: {
@@ -237,6 +232,8 @@
               html: `<strong>Appointment ID:</strong> ${data.id}<br><strong>Name:</strong> ${data.name}<br><strong>Package:</strong> ${data.package}<br><strong>Date:</strong> ${data.date}<br><strong>Time:</strong> ${data.time}`,
               icon: "success",
               confirmButtonText: "Okay",
+            }).then(() => {
+              document.getElementById("bookingForm").reset(); // Reset form fields
             });
           } else if (data.status === "duplicate") {
             Swal.fire({
