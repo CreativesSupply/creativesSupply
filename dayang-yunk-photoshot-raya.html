@@ -109,7 +109,7 @@
 
     <script>
       const API_URL =
-        "https://script.google.com/macros/s/AKfycbwgJUIoLPcuw7k03jxBnyzbekVe4b-NwaY0TOS7q8oEXYwRS5W8Q_yMlhosffUlc8rfwA/exec"; // Replace with your actual API URL
+        "https://script.google.com/macros/s/AKfycbxhKlLD36MejdMwUYMevQgJLSqHdcd3PsDVTAFRNLG0sFv-r5WAPD7le8L8IuGKplC5XQ/exec"; // Replace with your actual API URL
 
       // Convert "7March" to YYYY-MM-DD format
       function parseCustomDate(dateString) {
@@ -252,18 +252,22 @@
       function showBookingDetails(booking) {
         let modalTitle = document.getElementById("modalTitle");
         let modalBody = document.getElementById("modalBody");
+        let dateRaw = new Date(booking.date); // Convert string to Date object
+        const options = { day: "numeric", month: "long", year: "numeric" };
+        const formattedDate = dateRaw.toLocaleDateString("en-GB", options);
 
         // Convert time to 12-hour format with AM/PM
         let formattedTime = formatTimeTo12Hour(booking.time);
 
         modalTitle.textContent = "Booking Details";
         modalBody.innerHTML = `
-    <p><strong>Date:</strong> ${booking.date}</p>
+    <p><strong>Date:</strong> ${formattedDate}</p>
     <p><strong>Time:</strong> ${formattedTime}</p>
     <p><strong>Name:</strong> ${booking.name || "N/A"}</p>
     <p><strong>Phone:</strong> ${booking.phone || "N/A"}</p>
     <p><strong>People:</strong> ${booking.people || "N/A"} people</p>
     <p><strong>Payment:</strong> RM${booking.payment || "0.00"}</p>
+    <p><strong>Promoter:</strong> ${booking.promoter || "N/A"}</p>
   `;
 
         let bookingModal = new bootstrap.Modal(
@@ -295,6 +299,7 @@
               phone: b.phone, // ✅ Include Phone
               people: b.people, // ✅ Include Number of People
               payment: b.payment, // ✅ Include Payment
+              promoter: b.promoter, // ✅ Include Payment
             }));
           } else {
             console.error("Failed to fetch bookings");
@@ -351,7 +356,7 @@
               cell.classList.add("booked");
 
               // ✅ Add click event to show booking details
-              // cell.addEventListener("click", () => showBookingDetails(booking));
+              cell.addEventListener("click", () => showBookingDetails(booking));
             } else {
               cell.textContent = "";
             }

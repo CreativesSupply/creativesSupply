@@ -60,9 +60,23 @@
                 />
               </div>
 
+              <div class="mb-3">
+                <label for="promoter" class="form-label"
+                  >Promoter</label
+                >
+                <select id="promoter" class="form-control" required>
+                  <option value="" disabled selected>Select Promoter</option>
+                  <option value="dayang">Dayang</option>
+                  <option value="syafiq">Syafiq</option>
+                  <option value="nurul">Nurul</option>
+                </select>
+              </div>
+
               <button type="submit" class="btn btn-primary w-100">
                 Submit
               </button>
+              <a href="dayang-yunk-photoshot-raya.html" target="_blank"><div class="btn btn-secondary w-100 mt-3">Appointments</div></a
+              >
             </form>
           </div>
         </div>
@@ -140,6 +154,7 @@
         const timeInput = document.querySelector("#time").value;
         const people = document.querySelector("#people").value;
         const payment = document.querySelector("#payment").value;
+        const promoter = document.querySelector("#promoter").value;
 
         // ✅ Convert Date to "7March" format
         const dateObj = new Date(dateInput);
@@ -164,11 +179,12 @@
           time: formattedTime,
           people,
           payment,
+          promoter,
         };
 
         try {
           const response = await fetch(
-            "https://script.google.com/macros/s/AKfycbwgJUIoLPcuw7k03jxBnyzbekVe4b-NwaY0TOS7q8oEXYwRS5W8Q_yMlhosffUlc8rfwA/exec",
+            "https://script.google.com/macros/s/AKfycbxhKlLD36MejdMwUYMevQgJLSqHdcd3PsDVTAFRNLG0sFv-r5WAPD7le8L8IuGKplC5XQ/exec",
             {
               method: "POST",
               headers: {
