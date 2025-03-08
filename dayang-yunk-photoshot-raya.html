@@ -109,7 +109,7 @@
 
     <script>
       const API_URL =
-        "https://script.google.com/macros/s/AKfycbxhKlLD36MejdMwUYMevQgJLSqHdcd3PsDVTAFRNLG0sFv-r5WAPD7le8L8IuGKplC5XQ/exec"; // Replace with your actual API URL
+        "https://script.google.com/macros/s/AKfycby_UUE8gwSiZD0qISQa0EdBJr7gq-dqXKtjUb5kdgtVwUbtD8nbJg892eccd8zmWyeL4g/exec"; // Replace with your actual API URL
 
       // Convert "7March" to YYYY-MM-DD format
       function parseCustomDate(dateString) {
@@ -265,7 +265,10 @@
     <p><strong>Time:</strong> ${formattedTime}</p>
     <p><strong>Name:</strong> ${booking.name || "N/A"}</p>
     <p><strong>Phone:</strong> ${booking.phone || "N/A"}</p>
+    <p><strong>No IC:</strong> ${booking.noIc || "N/A"}</p>
     <p><strong>People:</strong> ${booking.people || "N/A"} people</p>
+    <p><strong>Package:</strong> ${booking.package || "N/A"}</p>
+    <p><strong>Deposit:</strong> RM${booking.deposit || "0.00"}</p>
     <p><strong>Payment:</strong> RM${booking.payment || "0.00"}</p>
     <p><strong>Promoter:</strong> ${booking.promoter || "N/A"}</p>
   `;

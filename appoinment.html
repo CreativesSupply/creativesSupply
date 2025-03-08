@@ -27,6 +27,11 @@
               </div>
 
               <div class="mb-3">
+                <label for="ic" class="form-label">No IC</label>
+                <input type="text" id="ic" class="form-control" />
+              </div>
+
+              <div class="mb-3">
                 <label for="date" class="form-label">Select Date</label>
                 <input type="date" id="date" class="form-control" required />
               </div>
@@ -43,6 +48,29 @@
                 <input
                   type="number"
                   id="people"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <div class="mb-3">
+                <label for="package" class="form-label"
+                  >Package</label
+                >
+                <select id="package" class="form-control" required>
+                  <option value="" disabled selected>Select Package</option>
+                  <option value="Photoshot">Photoshot</option>
+                  <option value="Make + Photoshot">Makeup + Photoshot</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="deposit" class="form-label"
+                  >Deposit(RM)</label
+                >
+                <input
+                  type="number"
+                  id="deposit"
                   class="form-control"
                   required
                 />
@@ -66,9 +94,9 @@
                 >
                 <select id="promoter" class="form-control" required>
                   <option value="" disabled selected>Select Promoter</option>
-                  <option value="dayang">Dayang</option>
-                  <option value="syafiq">Syafiq</option>
-                  <option value="nurul">Nurul</option>
+                  <option value="Dayang">Dayang</option>
+                  <option value="Syafiq">Syafiq</option>
+                  <option value="Nurul">Nurul</option>
                 </select>
               </div>
 
@@ -155,6 +183,9 @@
         const people = document.querySelector("#people").value;
         const payment = document.querySelector("#payment").value;
         const promoter = document.querySelector("#promoter").value;
+        const noIc = document.querySelector("#ic").value;
+        const deposit = document.querySelector("#deposit").value;
+        const package = document.querySelector("#package").value;
 
         // ✅ Convert Date to "7March" format
         const dateObj = new Date(dateInput);
@@ -175,16 +206,19 @@
         const formData = {
           name,
           phone,
+          noIc,
           date: formattedDate,
           time: formattedTime,
           people,
+          package,
+          deposit,
           payment,
           promoter,
         };
 
         try {
           const response = await fetch(
-            "https://script.google.com/macros/s/AKfycbxhKlLD36MejdMwUYMevQgJLSqHdcd3PsDVTAFRNLG0sFv-r5WAPD7le8L8IuGKplC5XQ/exec",
+            "https://script.google.com/macros/s/AKfycby_UUE8gwSiZD0qISQa0EdBJr7gq-dqXKtjUb5kdgtVwUbtD8nbJg892eccd8zmWyeL4g/exec",
             {
               method: "POST",
               headers: {
@@ -200,7 +234,7 @@
           if (data.status === "success" && data.id) {
             Swal.fire({
               title: "Success!",
-              html: `<strong>Appointment ID:</strong> ${data.id}<br><strong>Name:</strong> ${data.name}<br><strong>Date:</strong> ${data.date}<br><strong>Time:</strong> ${data.time}`,
+              html: `<strong>Appointment ID:</strong> ${data.id}<br><strong>Name:</strong> ${data.name}<br><strong>Package:</strong> ${data.package}<br><strong>Date:</strong> ${data.date}<br><strong>Time:</strong> ${data.time}`,
               icon: "success",
               confirmButtonText: "Okay",
             });
