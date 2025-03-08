@@ -37,9 +37,9 @@
       .booked {
         background-color: red;
         color: blue;
-        text-decoration: underline;
+        /* text-decoration: underline; */
         font-weight: bold;
-        cursor: pointer;
+        /* cursor: pointer; */
       }
     </style>
   </head>
@@ -359,7 +359,7 @@
               cell.classList.add("booked");
 
               // ✅ Add click event to show booking details
-              cell.addEventListener("click", () => showBookingDetails(booking));
+              // cell.addEventListener("click", () => showBookingDetails(booking));
             } else {
               cell.textContent = "";
             }
