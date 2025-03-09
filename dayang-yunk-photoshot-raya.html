@@ -229,7 +229,7 @@
       // Generate time slots (adjust as needed)
       function getTimeSlots() {
         return [
-          "09:30 AM",
+          "9:30 AM",
           "10:00 AM",
           "10:30 AM",
           "11:00 AM",
@@ -474,16 +474,15 @@
             let day = parseInt(parts[0]);
             let currentDate = new Date(2025, monthIndex, day);
             let isWeekend = false;
-            console.log("checkl");
-            console.log(currentDate.getDay());
+            // console.log("checkl");
+            // console.log(currentDate.getDay());
             if (currentDate.getDay() === 6 || currentDate.getDay() === 0) {
               // 6 = Saturday, 0 = Sunday
               isWeekend = true;
-              console.log("isWeekend");
-            console.log(isWeekend);
+              //   console.log("isWeekend");
+              // console.log(isWeekend);
             }
 
-            
             // ✅ Check for Rest Periods
             if (
               (!isWeekend &&
@@ -510,6 +509,22 @@
               let booking = bookings.find((b) => {
                 let bookedDate = b.date;
                 let bookedTime = convertTo12HourFormat(b.time);
+                console.log("============");
+
+                if(bookedDate == "2025-03-16"){
+                  console.log(bookedDate);
+                  console.log(bookedTime);
+                  console.log("============");
+                  console.log(b.date);
+                  console.log(b.time);
+                }
+                if (bookedDate === date && bookedTime === time) {
+                  console.log(bookedDate);
+                  console.log(bookedTime);
+                  console.log("============");
+                  console.log(b.date);
+                  console.log(b.time);
+                }
 
                 return bookedDate === date && bookedTime === time;
               });
