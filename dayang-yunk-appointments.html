@@ -535,7 +535,7 @@
                 return bookedDate === date && bookedTime === time;
               });
 
-              if (booking.status != 'Cancelled') {
+              if (booking && booking.status != 'Cancelled') {
                 console.log("Booking Found:", booking);
 
                 cell.textContent = "Booked";
