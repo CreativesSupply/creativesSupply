@@ -35,11 +35,35 @@
         z-index: 3; /* Ensure the header cell appears above other elements */
       }
       .booked {
-        background-color: red;
-        color: blue;
+        background-color: #ffa500 !important;
+        color: black !important;
         /* text-decoration: underline; */
         font-weight: bold;
         /* cursor: pointer; */
+      }
+
+      .called {
+        background-color: #007bff !important;
+        color: white !important;
+        text-decoration: underline;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .completed {
+        background-color: #28a745 !important;
+        color: white !important;
+        text-decoration: underline;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .cancelled {
+        background-color: #dc3545 !important;
+        color: white !important;
+        text-decoration: underline;
+        font-weight: bold;
+        cursor: pointer;
       }
     </style>
   </head>
@@ -104,12 +128,13 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       </div>
     </div>
 
     <script>
       const API_URL =
-        "https://script.google.com/macros/s/AKfycbzNMZLxQJMeXOGsz7djdbJllkknX2Z3Ij1-IhCXSDWTREMLZRXe1h2eMOiBCX5vK5h3hw/exec"; // Replace with your actual API URL
+        "https://script.google.com/macros/s/AKfycbwWKg3xbLS5DUCTsICzfNkOgLVRUyqRVlHyLguJKrbbtBJOerQpJpkjDvM8z63rtlUfxg/exec"; // Replace with your actual API URL
 
       // Convert "7March" to YYYY-MM-DD format
       function parseCustomDate(dateString) {
@@ -166,7 +191,7 @@
       function getDateRange() {
         let rawToday = new Date();
         let today = new Date(rawToday.getTime() + 8 * 60 * 60 * 1000); // Add 8 hours
-        let endDate = new Date("2025-04-07");
+        let endDate = new Date("2025-03-30");
         let dateArray = [];
 
         while (today <= endDate) {
@@ -178,10 +203,12 @@
       }
 
       function getHead() {
-        let rawToday = new Date();
-        let today = new Date(rawToday.getTime() + 8 * 60 * 60 * 1000); // Add 8 hours
-        let endDate = new Date("2025-04-07");
+        let today = new Date();
+        // let today = new Date(rawToday.getTime() + 8 * 60 * 60 * 1000); // Add 8 hours
+        let endDate = new Date("2025-03-30");
         let dateArray = [];
+
+        console.log(today);
 
         while (today <= endDate) {
           let options = {
@@ -203,53 +230,80 @@
       function getTimeSlots() {
         return [
           "09:30 AM",
-          "09:50 AM",
-          "10:10 AM",
+          "10:00 AM",
           "10:30 AM",
-          "10:50 AM",
-          "11:10 AM",
+          "11:00 AM",
           "11:30 AM",
-          "11:50 AM",
-          "12:10 PM",
+          "12:00 PM",
           "12:30 PM",
-          "12:50 PM",
-          "1:10 PM",
+          "1:00 PM",
           "1:30 PM",
-          "1:50 PM",
-          "2:10 PM",
+          "2:00 PM",
           "2:30 PM",
-          "2:50 PM",
-          "3:10 PM",
+          "3:00 PM",
           "3:30 PM",
-          "3:50 PM",
-          "4:10 PM",
-          "4:30 PM",
-          "4:50 PM",
-          "5:10 PM",
+          "4:00 PM",
+          "4:30 PM", //start rest weekday
+          "5:00 PM",
           "5:30 PM",
-          "5:50 PM",
-          "6:10 PM",
+          "6:00 PM", // start restweekend
           "6:30 PM",
-          "6:50 PM",
-          "7:10 PM",
+          "7:00 PM",
           "7:30 PM",
-          "7:50 PM",
-          "8:10 PM",
+          "8:00 PM", // end rest weekend  //weekday
           "8:30 PM",
-          "8:50 PM",
-          "9:10 PM",
+          "9:00 PM",
           "9:30 PM",
-          "9:50 PM",
-          "10:10 PM",
+          "10:00 PM",
           "10:30 PM",
-          "10:50 PM",
-          "11:10 PM",
+          "11:00 PM",
           "11:30 PM",
-          "11:50 PM",
         ];
       }
 
+      //raya 2
+      //9:30AM - 9PM
+      //Open 9PM - 11PM
+
+      //standby 50%
+      //5 and 12 april
+
+      async function updateBookingStatus(bookingId) {
+        let newStatus = document.getElementById("statusSelect").value;
+
+        console.log(bookingId);
+        let response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain", // ✅ Fix CORS issue
+          },
+          body: JSON.stringify({
+            action: "update",
+            id: bookingId,
+            status: newStatus,
+          }),
+        });
+
+        let result = await response.json();
+        if (result.status === "updated" && result.id) {
+          Swal.fire({
+            title: "Success!",
+            html: `<strong>Status updated successfully!</strong>`,
+            icon: "success",
+            confirmButtonText: "Okay",
+          }).then(() => {
+            location.reload();
+          });
+        } else {
+          alert(
+            "Failed to update status: " + (result.message || "Unknown error")
+          );
+        }
+      }
+
       function showBookingDetails(booking) {
+        console.log("showBookingDetails");
+        console.log(booking);
         let modalTitle = document.getElementById("modalTitle");
         let modalBody = document.getElementById("modalBody");
         let dateRaw = new Date(booking.date); // Convert string to Date object
@@ -271,6 +325,26 @@
     <p><strong>Deposit:</strong> RM${booking.deposit || "0.00"}</p>
     <p><strong>Payment:</strong> RM${booking.payment || "0.00"}</p>
     <p><strong>Promoter:</strong> ${booking.promoter || "N/A"}</p>
+
+    <label for="statusSelect"><strong>Status:</strong></label>
+        <select id="statusSelect" class="form-control">
+            <option value="Booked" ${
+              booking.status === "Booked" ? "selected" : ""
+            }>Booked</option>
+            <option value="Called" ${
+              booking.status === "Called" ? "selected" : ""
+            }>Called</option>
+            <option value="Completed" ${
+              booking.status === "Completed" ? "selected" : ""
+            }>Completed</option>
+            <option value="Cancelled" ${
+              booking.status === "Cancelled" ? "selected" : ""
+            }>Cancelled</option>
+        </select>
+        
+        <button class="btn btn-primary mt-3" onclick="updateBookingStatus('${
+          booking.id
+        }')">Update Status</button>
   `;
 
         let bookingModal = new bootstrap.Modal(
@@ -294,15 +368,20 @@
           let result = await response.json();
 
           if (result.status === "success") {
-            console.log(result.data);
+            // console.log(result.data);
             return result.data.map((b) => ({
+              id: b.id,
               date: parseCustomDate(b.date),
               time: parseCustomTime(b.time),
               name: b.name, // ✅ Include Name
               phone: b.phone, // ✅ Include Phone
+              noIc: b.noIc, // ✅ Include Phone
               people: b.people, // ✅ Include Number of People
+              deposit: b.deposit, // ✅ Include Number of People
+              package: b.package, // ✅ Include Number of People
               payment: b.payment, // ✅ Include Payment
               promoter: b.promoter, // ✅ Include Payment
+              status: b.status, // ✅ Include Payment
             }));
           } else {
             console.error("Failed to fetch bookings");
@@ -320,7 +399,8 @@
         let headers = getHead();
         let timeSlots = getTimeSlots();
         let bookings = await fetchBookings();
-        // console.log(bookings);
+        console.log("buildTable");
+        console.log(bookings);
 
         let tableHead = document.getElementById("tableHead");
         let tableBody = document.getElementById("tableBody");
@@ -334,9 +414,37 @@
         headers.forEach((date) => {
           let th = document.createElement("th");
           th.textContent = date;
+
+          // Convert "7 Mar" format back to Date to check the day
+          let parts = date.split(" "); // ["7", "Mar"]
+          let monthNames = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ];
+          let monthIndex = monthNames.indexOf(parts[1]);
+          let day = parseInt(parts[0]);
+          let currentDate = new Date(2025, monthIndex, day);
+
+          // If Saturday or Sunday, apply yellow background
+          if (currentDate.getDay() === 6 || currentDate.getDay() === 0) {
+            // 6 = Saturday, 0 = Sunday
+            th.style.backgroundColor = "#FFD700"; // Gold/Yellow
+          }
+
           headerRow.appendChild(th);
         });
 
+        // Create rows for each time slot
         // Create rows for each time slot
         timeSlots.forEach((time) => {
           let row = document.createElement("tr");
@@ -347,21 +455,77 @@
           // Fill each date column
           dates.forEach((date) => {
             let cell = document.createElement("td");
-            let booking = bookings.find((b) => {
-              let bookedDate = b.date;
-              let bookedTime = convertTo12HourFormat(b.time); // Convert to 12-hour format
+            let parts = date.split(" "); // ["7", "Mar"]
+            let monthNames = [
+              "Jan",
+              "Feb",
+              "Mar",
+              "Apr",
+              "May",
+              "Jun",
+              "Jul",
+              "Aug",
+              "Sep",
+              "Oct",
+              "Nov",
+              "Dec",
+            ];
+            let monthIndex = monthNames.indexOf(parts[1]);
+            let day = parseInt(parts[0]);
+            let currentDate = new Date(2025, monthIndex, day);
+            let isWeekend = false;
+            console.log("checkl");
+            console.log(currentDate.getDay());
+            if (currentDate.getDay() === 6 || currentDate.getDay() === 0) {
+              // 6 = Saturday, 0 = Sunday
+              isWeekend = true;
+              console.log("isWeekend");
+              console.log(isWeekend);
+            }
 
-              return bookedDate === date && bookedTime === time;
-            });
-
-            if (booking) {
-              cell.textContent = "Booked";
-              cell.classList.add("booked");
-
-              // ✅ Add click event to show booking details
-              // cell.addEventListener("click", () => showBookingDetails(booking));
+            // ✅ Check for Rest Periods
+            if (
+              (!isWeekend &&
+                (time === "4:30 PM" ||
+                  time === "5:00 PM" ||
+                  time === "5:30 PM" ||
+                  time === "6:00 PM" ||
+                  time === "6:30 PM" ||
+                  time === "7:00 PM" ||
+                  time === "7:30 PM" ||
+                  time === "8:00 PM" ||
+                  time === "8:30 PM")) || // Weekday rest
+              (isWeekend &&
+                (time === "6:00 PM" ||
+                  time === "6:30 PM" ||
+                  time === "7:00 PM" ||
+                  time === "7:30 PM")) // Weekend rest
+            ) {
+              cell.textContent = "Rest";
+              cell.style.backgroundColor = "#D3D3D3"; // Light Grey
+              cell.style.fontWeight = "bold";
+              cell.classList.add("rest");
             } else {
-              cell.textContent = "";
+              let booking = bookings.find((b) => {
+                let bookedDate = b.date;
+                let bookedTime = convertTo12HourFormat(b.time);
+
+                return bookedDate === date && bookedTime === time;
+              });
+
+              if (booking) {
+                console.log("Booking Found:", booking);
+
+                cell.textContent = "Booked";
+                cell.classList.add("booked");
+
+                // ✅ Add click event to show booking details
+                // cell.addEventListener("click", () =>
+                //   showBookingDetails(booking)
+                // );
+              } else {
+                cell.textContent = "";
+              }
             }
 
             row.appendChild(cell);

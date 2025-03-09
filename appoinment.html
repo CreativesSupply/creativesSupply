@@ -56,11 +56,23 @@
               <div class="mb-3">
                 <label for="package" class="form-label">Package</label>
                 <select id="package" class="form-control" required>
-                  <option value="" disabled selected>Select Package</option>
-                  <option value="Photoshot">Photoshot</option>
-                  <option value="Make + Photoshot">Makeup + Photoshot</option>
+                  <option value="" disabled selected>Select a Package</option>
+                  <option value="Pakej A">Pakej A - Kecil Ku ( RM 90 )</option>
+                  <option value="Pakej B">Pakej B - Besar Ku ( RM 120 )</option>
+                  <option value="Pakej C">Pakej C - Bahagia Ku ( RM 220 )</option>
                 </select>
               </div>
+
+              <!-- <div class="mb-3">
+                <label for="addon" class="form-label">Add On</label>
+                <select id="addon" class="form-control">
+                  <option value="" disabled selected>Select a Add On</option>
+                  <option value="Makeup">Makeup ( RM 100 )</option>
+                  <option value="Frame A">Frame 8x12 ( RM80 )</option>
+                  <option value="Frame B">Frame 12x18 ( RM150 )</option>
+                  <option value="Frame C">Frame 16x24 ( RM250 )</option>
+                </select>
+              </div> -->
 
               <div class="mb-3">
                 <label for="deposit" class="form-label">Deposit(RM)</label>
@@ -87,7 +99,7 @@
               <div class="mb-3">
                 <label for="promoter" class="form-label">Promoter</label>
                 <select id="promoter" class="form-control" required>
-                  <option value="" disabled selected>Select Promoter</option>
+                  <option value="" disabled selected>Select a Promoter</option>
                   <option value="Dayang">Dayang</option>
                   <option value="Syafiq">Syafiq</option>
                   <option value="Nurul">Nurul</option>
@@ -113,49 +125,34 @@
       // List of time slots
       const timeSlots = [
         "09:30 AM",
-        "09:50 AM",
-        "10:10 AM",
-        "10:30 AM",
-        "10:50 AM",
-        "11:10 AM",
-        "11:30 AM",
-        "11:50 AM",
-        "12:10 PM",
-        "12:30 PM",
-        "12:50 PM",
-        "1:10 PM",
-        "1:30 PM",
-        "1:50 PM",
-        "2:10 PM",
-        "2:30 PM",
-        "2:50 PM",
-        "3:10 PM",
-        "3:30 PM",
-        "3:50 PM",
-        "4:10 PM",
-        "4:30 PM",
-        "4:50 PM",
-        "5:10 PM",
-        "5:30 PM",
-        "5:50 PM",
-        "6:10 PM",
-        "6:30 PM",
-        "6:50 PM",
-        "7:10 PM",
-        "7:30 PM",
-        "7:50 PM",
-        "8:10 PM",
-        "8:30 PM",
-        "8:50 PM",
-        "9:10 PM",
-        "9:30 PM",
-        "9:50 PM",
-        "10:10 PM",
-        "10:30 PM",
-        "10:50 PM",
-        "11:10 PM",
-        "11:30 PM",
-        "11:50 PM",
+          "10:00 AM",
+          "10:30 AM",
+          "11:00 AM",
+          "11:30 AM",
+          "12:00 PM",
+          "12:30 PM",
+          "1:00 PM",
+          "1:30 PM",
+          "2:00 PM",
+          "2:30 PM",
+          "3:00 PM",
+          "3:30 PM",
+          "4:00 PM",
+          "4:30 PM", //start rest weekday
+          "5:00 PM",
+          "5:30 PM",
+          "6:00 PM", // start restweekend
+          "6:30 PM",
+          "7:00 PM",
+          "7:30 PM",
+          "8:00 PM", // end rest weekend  //weekday
+          "8:30 PM",
+          "9:00 PM",
+          "9:30 PM",
+          "10:00 PM",
+          "10:30 PM",
+          "11:00 PM",
+          "11:30 PM",
       ];
 
       // Populate the select dropdown
@@ -199,6 +196,7 @@
         console.log(timeInput);
         // ✅ Final Data Object
         const formData = {
+          action: "create",
           name,
           phone,
           noIc,
@@ -213,7 +211,7 @@
 
         try {
           const response = await fetch(
-            "https://script.google.com/macros/s/AKfycbzNMZLxQJMeXOGsz7djdbJllkknX2Z3Ij1-IhCXSDWTREMLZRXe1h2eMOiBCX5vK5h3hw/exec",
+            "https://script.google.com/macros/s/AKfycbwWKg3xbLS5DUCTsICzfNkOgLVRUyqRVlHyLguJKrbbtBJOerQpJpkjDvM8z63rtlUfxg/exec",
             {
               method: "POST",
               headers: {
