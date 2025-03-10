@@ -313,6 +313,29 @@
         // Convert time to 12-hour format with AM/PM
         let formattedTime = formatTimeTo12Hour(booking.time);
 
+        const packages = {
+            "Pakej A": "Keluarga Kecil Ku (RM90)",
+            "Pakej B": "Keluarga Besar Ku (RM120)",
+            "Pakej C": "Keluarga Bahagia Ku (RM220)"
+        };
+
+        const addOns = {
+            "Makeup": "Makeup (RM100)",
+            "Frame A": "Frame 8x12 (RM50)",
+            "Frame B": "Frame 12x18 (RM150)",
+            "Frame C": "Frame 16x24 (RM250)"
+        };
+
+        const formatAddOns = (addOnsString) => {
+            if (!addOnsString) return "N/A"; // Handle empty add-ons
+
+            return addOnsString
+                .split(", ") // Split by comma and space
+                .map(addOn => addOns[addOn] || addOn) // Map to full name with price (keep unknown ones)
+                .join(", "); // Join back into a readable string
+        };
+
+
         modalTitle.textContent = "Booking Details";
         modalBody.innerHTML = `
     <p><strong>Date:</strong> ${formattedDate}</p>
@@ -321,8 +344,8 @@
     <p><strong>Phone:</strong> ${booking.phone || "N/A"}</p>
     <p><strong>No IC:</strong> ${booking.noIc || "N/A"}</p>
     <p><strong>People:</strong> ${booking.people || "N/A"} people</p>
-    <p><strong>Package:</strong> ${booking.package || "N/A"}</p>
-    <p><strong>Add Ons:</strong> ${booking.addOns || "N/A"}</p>
+    <p><strong>Package:</strong> ${packages[booking.package] || "N/A"}</p>
+    <p><strong>Add Ons:</strong> ${formatAddOns(booking.addOns)}</p>
     <p><strong>Deposit:</strong> RM${booking.deposit || "0.00"}</p>
     <p><strong>Discount:</strong> RM${booking.discount || "0.00"}</p>
     <p><strong>Payment:</strong> RM${booking.payment || "0.00"}</p>
