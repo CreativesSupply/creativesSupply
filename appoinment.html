@@ -397,13 +397,20 @@
         });
       });
 
-      const restWeekday = ["04:30 PM", "05:00 PM", "05:30 PM"];
-      const restWeekend = [
+      const restWeekday = [
+        "04:30 PM", 
+        "05:00 PM", 
+        "05:30 PM",
         "06:00 PM",
         "06:30 PM",
         "07:00 PM",
         "07:30 PM",
         "08:00 PM",
+        "08:30 PM"
+      ];
+      const restWeekend = [
+        "07:00 PM",
+        "07:30 PM"
       ];
 
       document.getElementById("date").addEventListener("change", function () {
@@ -420,14 +427,19 @@
 
           // console.log(timeValue);
           // console.log(formattedTime);
-          if (
-            restWeekday.includes(formattedTime) ||
-            (isWeekend && restWeekend.includes(formattedTime))
-          ) {
+          if(isWeekend && restWeekend.includes(formattedTime)){
             button.style.display = "none"; // Hide rest times
-          } else {
+          }else if(!isWeekend && restWeekday.includes(formattedTime)){
+            button.style.display = "none"; // Hide rest times
+          }else{
             button.style.display = "inline-block"; // Show available times
+
           }
+          // if (restWeekday.includes(formattedTime) || (isWeekend && restWeekend.includes(formattedTime))) {
+          //   button.style.display = "none"; // Hide rest times
+          // } else {
+          //   button.style.display = "inline-block"; // Show available times
+          // }
         });
       });
 
@@ -635,7 +647,7 @@
 
         try {
           const response = await fetch(
-            "https://script.google.com/macros/s/AKfycbyOsSSZe5sKOcSIQwd0JA9p6BIu8g3jqwaOENkbHNbvdH4KCL4k06dQn--DGEcDOOqW2g/exec",
+            "https://script.google.com/macros/s/AKfycbzw7_o0lVOyIBENGtCXegfXYWpO8eeT9Aw4ScC0PM1LZZX47s1z6HEREIFOogR2zNsd0Q/exec",
             {
               method: "POST",
               headers: {
