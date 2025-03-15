@@ -131,6 +131,7 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       </div>
     </div>
+    <script src="config.js"></script>
 
     <script>
       const API_URL =
@@ -368,7 +369,7 @@
       // Fetch bookings from API
       async function fetchBookings() {
         try {
-          let response = await fetch(API_URL);
+          let response = await fetch(CONFIG.API_URL);
           let result = await response.json();
 
           if (result.status === "success") {

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cash Flow - Booking Photoshoot</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container mt-4">
+      <h2 class="mb-3">Cash Flow - Booking Photoshoot</h2>
+      <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>Bil.</th>
+            <th>Nama</th>
+            <th>Tarikh</th>
+            <th>Masa</th>
+            <th>Pakej</th>
+            <th>Pakej (RM)</th>
+            <th>Frame</th>
+            <th>Makeup</th>
+            <th>Raya</th>
+            <th>Diskaun (RM)</th>
+            <th>Promoter (RM)</th>
+            <th>Total Bayar (RM)</th>
+            <th>Photo (RM)</th>
+            <th>Butik (RM)</th>
+          </tr>
+        </thead>
+        <tbody id="bookingTableBody">
+          <!-- Data will be populated here dynamically -->
+        </tbody>
+      </table>
+    </div>
+    <script src="config.js"></script>
+    <script>
+      // const API_URL = "your-api-url-here"; // Replace with actual API URL
+
+      const packages = {
+        "Pakej A": "Keluarga Kecil Ku (RM90)",
+        "Pakej B": "Keluarga Besar Ku (RM120)",
+        "Pakej C": "Keluarga Bahagia Ku (RM220)",
+      };
+
+      const addOns = {
+        Makeup: "Makeup (RM100)",
+        "Frame A": "Frame 8x12 (RM50)",
+        "Frame B": "Frame 12x18 (RM150)",
+        "Frame C": "Frame 16x24 (RM250)",
+      };
+
+      function extractPrice(text) {
+        const match = text.match(/\(RM(\d+)\)/);
+        // console.log("text");
+        // console.log(text);
+        return match ? parseInt(match[1]) : 0;
+      }
+
+      function extractPriceMakeup(text) {
+        const match = text.match(/\(RM(\d+)\)/);
+        console.log("text");
+        console.log(text);
+        return match ? parseInt(match[1]) : 0;
+      }
+
+      async function fetchBookings() {
+        try {
+          let response = await fetch(CONFIG.API_URL);
+          let result = await response.json();
+          if (result.status === "success") {
+            let tableBody = document.getElementById("bookingTableBody");
+            tableBody.innerHTML = "";
+
+            function parseDate(dateString) {
+              const year = new Date().getFullYear(); // Get current year
+              const monthNames = {
+                January: 0,
+                February: 1,
+                March: 2,
+                April: 3,
+                May: 4,
+                June: 5,
+                July: 6,
+                August: 7,
+                September: 8,
+                October: 9,
+                November: 10,
+                December: 11,
+              };
+
+              const match = dateString.match(/(\d+)([A-Za-z]+)/); // Extract number and month
+              if (!match) return null; // Return null if format is incorrect
+
+              const day = parseInt(match[1], 10);
+              const month = monthNames[match[2]];
+
+              if (month === undefined) return null; // Invalid month name
+
+              return new Date(year, month, day);
+            }
+
+            function parseTime(timeString) {
+              const match = timeString.match(/(\d{1,2})(\d{2})(AM|PM)/);
+              if (!match) return "00:00"; // Default if incorrect format
+
+              let hours = parseInt(match[1], 10);
+              const minutes = match[2];
+              const period = match[3];
+
+              if (period === "PM" && hours !== 12) hours += 12; // Convert PM times
+              if (period === "AM" && hours === 12) hours = 0; // Midnight case
+
+              return `${String(hours).padStart(2, "0")}:${minutes}`;
+            }
+
+            result.data.sort((a, b) => {
+              const dateA = parseDate(a.date);
+              const dateB = parseDate(b.date);
+
+              if (dateA - dateB !== 0) return dateA - dateB; // Sort by date first
+
+              const timeA = parseTime(a.time);
+              const timeB = parseTime(b.time);
+
+              return timeA.localeCompare(timeB); // Sort by time if dates are equal
+            });
+
+            let totalBayar = 0;
+            let totalPhoto = 0;
+            let totalButik = 0;
+            console.log(result.data);
+            result.data.forEach((b, index) => {
+              let packageAmount = extractPrice(packages[b.package] || "RM0");
+              let makeupAmount = 0;
+              let frameA = 0;
+              let frameB = 0;
+              let frameC = 0;
+              let splitPhoto = 0;
+              let splitButik = 0;
+              let diskaunPhoto = 0;
+              let diskaunButik = 0;
+
+              if (b.addOns && b.addOns.includes("Makeup")) {
+                makeupAmount = 100;
+              }
+              if (b.addOns && b.addOns.includes("Frame A")) {
+                frameA = 50;
+              }
+              if (b.addOns && b.addOns.includes("Frame B")) {
+                frameB = 150;
+              }
+              if (b.addOns && b.addOns.includes("Frame C")) {
+                frameC = 250;
+              }
+              let frameAmount = extractPrice(addOns[b.addOns?.frame] || "RM0");
+              let totalAmount = packageAmount + makeupAmount + frameAmount;
+
+              // Convert "23March" to Date
+              const bookingDate = parseDate(b.date);
+
+              // Check if booking date is after March 31
+              const rayaAmount =
+                bookingDate &&
+                bookingDate > new Date(new Date().getFullYear(), 2, 31)
+                  ? 50
+                  : 0;
+
+              // Split price
+              if (b.package == "Pakej A") {
+                splitPhoto = 60;
+                splitButik = 30;
+              }
+              if (b.package == "Pakej B") {
+                splitPhoto = 80;
+                splitButik = 40;
+              }
+              if (b.package == "Pakej C") {
+                splitPhoto = 150;
+                splitButik = 70;
+              }
+
+              if (b.promoter == "Dayang") {
+                diskaunButik = b.discount;
+              }
+              if (b.promoter == "Syafiq") {
+                diskaunPhoto = b.discount;
+              }
+
+              let photoAmount =
+                splitPhoto +
+                  frameA +
+                  frameB +
+                  frameC -
+                  diskaunPhoto +
+                  rayaAmount / 2 || 0;
+              let butikAmount =
+                splitButik + makeupAmount - diskaunButik + rayaAmount / 2 || 0;
+
+              // Accumulate totals
+              totalBayar += totalAmount;
+              totalPhoto += photoAmount;
+              totalButik += butikAmount;
+
+              console.log("bookingDate");
+              console.log(bookingDate);
+              let row = `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${b.name}</td>
+                                <td>${b.date}</td>
+                                <td>${b.time}</td>
+                                <td>${b.package}</td>
+                                <td>${packageAmount}</td>
+                                <td>${frameA + frameB + frameC}</td>
+                                <td>${makeupAmount}</td>
+                                <td>${rayaAmount}</td>
+                                <td>${b.discount}</td>
+                                <td>${b.promoter}</td>
+                                <td>${totalAmount}</td>
+                                <td>${
+                                  photoAmount
+                                }</td>
+                                <td>${
+                                  butikAmount
+                                }</td>
+                            </tr>
+                        `;
+              tableBody.innerHTML += row;
+            });
+            // Append total row at the bottom
+            let totalRow = `
+    <tr style="font-weight: bold; background-color: #f0f0f0;">
+        <td colspan="11" style="text-align: right;">Jumlah:</td>
+        <td>RM ${totalBayar}</td>
+        <td>RM ${totalPhoto}</td>
+        <td>RM ${totalButik}</td>
+    </tr>
+`;
+
+            tableBody.innerHTML += totalRow;
+          } else {
+            console.error("Failed to fetch bookings");
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", fetchBookings);
+    </script>
+  </body>
+</html>
