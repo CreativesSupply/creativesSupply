@@ -97,6 +97,8 @@
           "Pakej A": "Keluarga Kecil Ku (RM90)",
           "Pakej B": "Keluarga Besar Ku (RM120)",
           "Pakej C": "Keluarga Bahagia Ku (RM220)",
+          "Pakej D": "Pakej Raya Pertama & Kedua (RM 180)",
+          "Pakej E": "Pakej Raya Pertama & Kedua (RM 280)"
         };
 
         const addOns = {
@@ -148,6 +150,8 @@
         "Pakej A": "Keluarga Kecil Ku (RM90)",
         "Pakej B": "Keluarga Besar Ku (RM120)",
         "Pakej C": "Keluarga Bahagia Ku (RM220)",
+        "Pakej D": "Pakej Raya Pertama & Kedua (RM 180)",
+        "Pakej E": "Pakej Raya Pertama & Kedua (RM 280)"
       };
 
       const addOns = {
@@ -265,13 +269,19 @@
 
               // Convert "23March" to Date
               const bookingDate = parseDate(b.date);
-
+              
               // Check if booking date is after March 31
-              const rayaAmount =
+              let rayaAmount =
                 bookingDate &&
-                bookingDate > new Date(new Date().getFullYear(), 2, 31)
+                bookingDate > new Date(new Date().getFullYear(), 2, 30) &&
+                !(bookingDate.getDate() === 31 && bookingDate.getMonth() === 2) && // Not March 31
+                !(bookingDate.getDate() === 1 && bookingDate.getMonth() === 3) // Not April 1
                   ? 50
                   : 0;
+
+              if(b.id == "ID13"){
+                rayaAmount = 50;
+              }
 
               // Split price
               if (b.package == "Pakej A") {
@@ -285,6 +295,14 @@
               if (b.package == "Pakej C") {
                 splitPhoto = 150;
                 splitButik = 70;
+              }
+              if (b.package == "Pakej D") {
+                splitPhoto = 120;
+                splitButik = 60;
+              }
+              if (b.package == "Pakej E") {
+                splitPhoto = 190;
+                splitButik = 90;
               }
 
               if (b.promoter == "Dayang") {
