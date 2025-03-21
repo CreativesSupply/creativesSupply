@@ -39,7 +39,7 @@
               <div class="mb-3">
                 <label class="form-label">Raya (RM)</label><br>
                 
-                <input type="number" id="raya" class="form-control" name="raya" value="0">
+                <input type="number" id="raya" class="form-control" name="raya">
               </div>
             
 
@@ -388,6 +388,7 @@
         document.querySelector("#payment").addEventListener("input", updateBalance);
         document.querySelector("#discount").addEventListener("input", updateBalance);
         document.querySelector("#deposit").addEventListener("input", updateBalance);
+        document.querySelector("#raya").addEventListener("input", updateBalance);
         document.querySelectorAll("input[name='addon[]']").forEach((checkbox) => {
           checkbox.addEventListener("change", updateBalance);
         });
@@ -515,16 +516,16 @@
         let payment       = parseFloat(document.querySelector("#payment").value) || 0;
         let discount      = parseFloat(document.querySelector("#discount").value) || 0;
         let deposit       = parseFloat(document.querySelector("#deposit").value) || 0;
+        let raya          = parseFloat(document.querySelector("#raya").value) || 0;
         const package     = document.querySelector("#package").value;
         let pricePackage  = 0;
 
         // Declare addon checkboxes
-        const addonCheckboxes = document.querySelectorAll("input[name='addon[]']");
+        const addonCheckboxes   = document.querySelectorAll("input[name='addon[]']");
 
         // Get total add-ons price
-        const totalAddOnsPrice = getSelectedAddons().reduce((sum, addon) => sum + addon.price, 0);
+        const totalAddOnsPrice  = getSelectedAddons().reduce((sum, addon) => sum + addon.price, 0);
 
-        let isRaya = document.querySelector("input[name='season']:checked")?.value === "raya";
 
         // Package price assignment (fixing == issue)
         if (package === 'Pakej A') {
@@ -540,11 +541,8 @@
         }
 
         // Balance calculation
-        let balance = pricePackage + totalAddOnsPrice - payment - discount - deposit;
+        let balance = pricePackage + totalAddOnsPrice - payment - discount - deposit + raya;
 
-        if (isRaya) {
-            balance += 50;
-        }
         // Ensure balance is not NaN or negative
         if (isNaN(balance) || balance < 0) {
             balance = 0;
