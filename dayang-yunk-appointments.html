@@ -192,7 +192,7 @@
       function getDateRange() {
         let today = new Date("2025-03-10");
         // let today = new Date(rawToday.getTime() + 8 * 60 * 60 * 1000); // Add 8 hours
-        let endDate = new Date("2025-04-06");
+        let endDate = new Date("2025-04-13");
         let dateArray = [];
 
         while (today <= endDate) {
@@ -206,7 +206,7 @@
       function getHead() {
         let today = new Date("2025-03-10");
         // let today = new Date(rawToday.getTime() + 8 * 60 * 60 * 1000); // Add 8 hours
-        let endDate = new Date("2025-04-06");
+        let endDate = new Date("2025-04-13");
         let dateArray = [];
 
         console.log(today);
@@ -493,14 +493,8 @@
             // ✅ Check for Rest Periods
             if (
               (!isWeekend &&
-                (time === "4:30 PM" ||
-                  time === "5:00 PM" ||
-                  time === "5:30 PM" ||
-                  time === "6:00 PM" ||
-                  time === "6:30 PM" ||
-                  time === "7:00 PM" ||
-                  time === "7:30 PM" ||
-                  time === "8:00 PM")) || // Weekday rest
+                (time === "7:00 PM" ||
+                  time === "7:30 PM")) || // Weekday rest
               (isWeekend &&
                 (time === "7:00 PM" ||
                   time === "7:30 PM")) // Weekend rest

@@ -191,7 +191,7 @@
       function getDateRange() {
         let today = new Date("2025-03-10");
         // let today = new Date(rawToday.getTime() + 8 * 60 * 60 * 1000); // Add 8 hours
-        let endDate = new Date("2025-04-06");
+        let endDate = new Date("2025-04-13");
         let dateArray = [];
 
         while (today <= endDate) {
@@ -205,7 +205,7 @@
       function getHead() {
         let today = new Date("2025-03-10");
         // let today = new Date(rawToday.getTime() + 8 * 60 * 60 * 1000); // Add 8 hours
-        let endDate = new Date("2025-04-06");
+        let endDate = new Date("2025-04-13");
         let dateArray = [];
 
         console.log(today);
@@ -518,14 +518,8 @@
             // ✅ Check for Rest Periods
             if (
               (!isWeekend &&
-                (time === "4:30 PM" ||
-                  time === "5:00 PM" ||
-                  time === "5:30 PM" ||
-                  time === "6:00 PM" ||
-                  time === "6:30 PM" ||
-                  time === "7:00 PM" ||
-                  time === "7:30 PM" ||
-                  time === "8:00 PM")) || // Weekday rest
+                (time === "7:00 PM" ||
+                  time === "7:30 PM")) || // Weekday rest
               (isWeekend &&
                 (time === "7:00 PM" ||
                   time === "7:30 PM")) // Weekend rest
@@ -558,19 +552,42 @@
                 return bookedDate === date && bookedTime === time;
               });
 
+
               if (booking && booking.status != 'Cancelled') {
                 console.log("Booking Found:", booking);
                 if (booking.status == "Booked") {
                   cell.textContent = "Booked";
                   cell.classList.add("booked");
 
-                  if (booking.addOns.includes("Makeup")) {
-                    cell.textContent += " + Makeup"; // Append Makeup instead of replacing
-                    cell.classList.add("Makeup");
+                  // Convert booking.addOns to an array by splitting on ", "
+                  let addOnsArray = typeof booking.addOns === "string" ? booking.addOns.split(", ") : [];
+
+                  if (addOnsArray.includes("Makeup")) {
+                      cell.textContent += " + Makeup";
+                      cell.classList.add("Makeup");
                   }
+
+                  if (addOnsArray.some(addOn => addOn.toLowerCase().includes("frame"))) {
+                      cell.textContent += " + Frame";
+                      cell.classList.add("Frame");
+                  }
+
                 } else if (booking.status == "Called") {
                   cell.textContent = "Called";
                   cell.classList.add("called");
+
+                  // Convert booking.addOns to an array by splitting on ", "
+                  let addOnsArray = typeof booking.addOns === "string" ? booking.addOns.split(", ") : [];
+
+                  if (addOnsArray.includes("Makeup")) {
+                      cell.textContent += " + Makeup";
+                      cell.classList.add("Makeup");
+                  }
+
+                  if (addOnsArray.some(addOn => addOn.toLowerCase().includes("frame"))) {
+                      cell.textContent += " + Frame";
+                      cell.classList.add("Frame");
+                  }
                 } else if (booking.status == "Completed") {
                   cell.textContent = "Completed";
                   cell.classList.add("completed");

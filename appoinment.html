@@ -37,13 +37,9 @@
               </div>
 
               <div class="mb-3">
-                <label class="form-label">Raya</label><br>
+                <label class="form-label">Raya (RM)</label><br>
                 
-                <input type="radio" id="raya" name="season" value="raya">
-                <label for="raya">Raya</label>
-            
-                <input type="radio" id="bukan-raya" name="season" value="bukan_raya">
-                <label for="bukan-raya">Bukan Raya</label>
+                <input type="number" id="raya" class="form-control" name="raya" value="0">
               </div>
             
 
@@ -402,14 +398,8 @@
       });
 
       const restWeekday = [
-        "04:30 PM", 
-        "05:00 PM", 
-        "05:30 PM",
-        "06:00 PM",
-        "06:30 PM",
         "07:00 PM",
-        "07:30 PM",
-        "08:00 PM"
+        "07:30 PM"
       ];
       const restWeekend = [
         "07:00 PM",
@@ -594,6 +584,7 @@
         const noIc      = document.querySelector("#ic").value;
         const package   = document.querySelector("#package").value;
         const remarks   = document.querySelector("#remarks").value;
+        const raya   = document.querySelector("#raya").value;
 
         let payment = parseFloat(document.querySelector("#payment").value) || 0;
         let discount = parseFloat(document.querySelector("#discount").value) || 0;
@@ -648,6 +639,7 @@
           remarks,
           balance,
           discount,
+          raya,
         };
 
         console.log(formData);

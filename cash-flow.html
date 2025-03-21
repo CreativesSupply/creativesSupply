@@ -10,6 +10,31 @@
     />
   </head>
   <body>
+    <style>
+      .discount {
+        background-color: #dc3545 !important;
+        color: white !important;
+        font-weight: bold;
+      }
+
+      .makeup {
+        background-color: purple !important;
+        color: white !important;
+        font-weight: bold;
+      }
+
+      .raya {
+        background-color: green !important;
+        color: white !important;
+        font-weight: bold;
+      }
+
+      .frame {
+        background-color: yellowgreen !important;
+        color: white !important;
+        font-weight: bold;
+      }
+    </style>
     <div class="container mt-4">
       <h2 class="mb-3">Cash Flow - Booking Photoshoot</h2>
       <table class="table table-bordered table-striped">
@@ -265,7 +290,6 @@
                 frameC = 250;
               }
               let frameAmount = extractPrice(addOns[b.addOns?.frame] || "RM0");
-              let totalAmount = packageAmount + makeupAmount + frameAmount;
 
               // Convert "23March" to Date
               const bookingDate = parseDate(b.date);
@@ -276,8 +300,9 @@
                 bookingDate > new Date(new Date().getFullYear(), 2, 30) &&
                 !(bookingDate.getDate() === 31 && bookingDate.getMonth() === 2) && // Not March 31
                 !(bookingDate.getDate() === 1 && bookingDate.getMonth() === 3) // Not April 1
-                  ? 50
-                  : 0;
+                    ? b.raya // Use b.raya if it exists, otherwise default to 50
+                    : 0;
+
 
               if(b.id == "ID13"){
                 rayaAmount = 50;
@@ -301,8 +326,8 @@
                 splitButik = 60;
               }
               if (b.package == "Pakej E") {
-                splitPhoto = 190;
-                splitButik = 90;
+                splitPhoto = 180;
+                splitButik = 100;
               }
 
               if (b.promoter == "Dayang") {
@@ -318,9 +343,11 @@
                   frameB +
                   frameC -
                   diskaunPhoto +
-                  rayaAmount / 2 || 0;
+                  (rayaAmount / 2) || 0;
               let butikAmount =
-                splitButik + makeupAmount - diskaunButik + rayaAmount / 2 || 0;
+                splitButik + makeupAmount - diskaunButik + (rayaAmount / 2) || 0;
+
+              let totalAmount = packageAmount + makeupAmount + frameA + frameB + frameC + rayaAmount - diskaunPhoto - diskaunButik;
 
               // Accumulate totals
               totalBayar += totalAmount;
@@ -341,10 +368,14 @@
                                 <td>${b.time}</td>
                                 <td>${b.package}</td>
                                 <td>${packageAmount}</td>
-                                <td>${frameA + frameB + frameC}</td>
-                                <td>${makeupAmount}</td>
-                                <td>${rayaAmount}</td>
-                                <td>${b.discount}</td>
+                                <td class="${(frameA || frameB || frameC) ? 'frame' : ''}">
+                                    ${frameA + frameB + frameC}
+                                </td>
+                                <td class="${makeupAmount !== 0 ? 'makeup' : ''}">${makeupAmount}</td>
+                                <td class="${rayaAmount !== 0 ? 'raya' : ''}">${rayaAmount}</td>
+                                <td class="${b.discount !== 0 ? 'discount' : ''}">
+                                    ${b.discount !== 0 ? `- ${b.discount}` : b.discount}
+                                </td>
                                 <td>${b.promoter}</td>
                                 <td>${totalAmount}</td>
                                 <td>${photoAmount}</td>
