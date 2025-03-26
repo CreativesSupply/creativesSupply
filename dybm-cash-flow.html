@@ -373,8 +373,8 @@
                                 </td>
                                 <td class="${makeupAmount !== 0 ? 'makeup' : ''}">${makeupAmount}</td>
                                 <td class="${rayaAmount !== 0 ? 'raya' : ''}">${rayaAmount}</td>
-                                <td class="${b.discount !== 0 ? 'discount' : ''}">
-                                    ${b.discount !== 0 ? `- ${b.discount}` : b.discount}
+                                <td class="${b.discount !== 0 && b.discount !== '0.00' ? 'discount' : ''}">
+                                    ${b.discount !== 0 && b.discount !== '0.00' ? `- ${b.discount}` : b.discount}
                                 </td>
                                 <td>${b.promoter}</td>
                                 <td>${totalAmount}</td>

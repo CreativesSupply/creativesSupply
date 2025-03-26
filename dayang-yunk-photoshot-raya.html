@@ -268,8 +268,39 @@
       //standby 50%
       //5 and 12 april
 
-      async function updateBookingStatus(bookingId) {
+      async function updateBooking(bookingId) {
         let newStatus = document.getElementById("statusSelect").value;
+        let dateInput = document.getElementById("dateInput").value;
+        let timeInput = document.getElementById("timeInput").value;
+        let raya = document.getElementById("rayaInput").value;
+        let name = document.getElementById("nameInput").value;
+        let phone = document.getElementById("phoneInput").value;
+        let noIc = document.getElementById("noIcInput").value;
+        let people = document.getElementById("peopleInput").value;
+        let packageSelected = document.getElementById("packageInput").value;
+        let deposit = document.getElementById("depositInput").value;
+        let discount = document.getElementById("discountInput").value;
+        let payment = document.getElementById("paymentInput").value;
+        let balance = document.getElementById("balanceInput").value;
+        let promoter = document.getElementById("promoterInput").value;
+        let remarks = document.getElementById("remarksInput").value;
+
+        // ✅ Convert Date to "7March" format
+        const dateObj = new Date(dateInput);
+        const day = dateObj.getDate(); // Get day (7)
+        const month = dateObj.toLocaleString("en-US", { month: "long" }); // Get full month (March)
+        const formattedDate = `${day}${month}`; // "7March"
+
+        // ✅ Convert Time to "320PM" format
+        const [hours, minutes] = timeInput.split(":");
+        let hourNum = parseInt(hours, 10);
+        const period = hourNum >= 12 ? "PM" : "AM"; // Determine AM/PM
+        hourNum = hourNum % 12 || 12; // Convert 24-hour to 12-hour format
+        const formattedTime = `${hourNum}${minutes}${period}`.replace(/\s/g, "");
+
+        const addOns = getSelectedAddons()
+          .map((addon) => `${addon.name}`)
+          .join(", "); // Convert array to a comma-separated string
 
         console.log(bookingId);
         let response = await fetch(CONFIG.API_URL, {
@@ -280,7 +311,22 @@
           body: JSON.stringify({
             action: "update",
             id: bookingId,
+            name: name,
+            phone: phone,
+            noIc: noIc,
+            date: formattedDate,
+            time: formattedTime,
             status: newStatus,
+            people: people,
+            package: packageSelected,
+            addOns: addOns,
+            deposit: deposit,
+            discount: discount,
+            payment: payment,
+            balance: balance,
+            promoter: promoter,
+            remarks: remarks,
+            raya: raya,
           }),
         });
 
@@ -295,86 +341,259 @@
             location.reload();
           });
         } else {
-          alert(
-            "Failed to update status: " + (result.message || "Unknown error")
-          );
+          Swal.fire({
+            title: "Error",
+            text: result.message || "Unknown error occurred.",
+            icon: "error",
+            confirmButtonText: "Okay",
+          });
         }
       }
 
+      function getSelectedAddons() {
+        const addonCheckboxes = document.querySelectorAll(
+          "input[name='addon[]']"
+        );
+        let selectedAddons = [];
+        addonCheckboxes.forEach((checkbox) => {
+          if (checkbox.checked) {
+            selectedAddons.push({
+              name: checkbox.value,
+              price: parseInt(checkbox.getAttribute("data-price")),
+            });
+          }
+        });
+        return selectedAddons;
+      }
+
+      function updateBalance() {
+        console.log("trigger update balance")
+        let payment = parseFloat(document.querySelector("#paymentInput").value) || 0;
+        let discount =
+          parseFloat(document.querySelector("#discountInput").value) || 0;
+        let deposit = parseFloat(document.querySelector("#depositInput").value) || 0;
+        let raya = parseFloat(document.querySelector("#rayaInput").value) || 0;
+        const package = document.querySelector("#packageInput").value;
+        let pricePackage = 0;
+
+        // Get total add-ons price
+        const totalAddOnsPrice = getSelectedAddons().reduce(
+          (sum, addon) => sum + addon.price,
+          0
+        );
+
+        // Package price assignment
+        if (package === "Pakej A") {
+          pricePackage = 90;
+        } else if (package === "Pakej B") {
+          pricePackage = 120;
+        } else if (package === "Pakej C") {
+          pricePackage = 220;
+        } else if (package === "Pakej D") {
+          pricePackage = 180;
+        } else if (package === "Pakej E") {
+          pricePackage = 280;
+        }
+
+        // Balance calculation
+        let balance =
+          pricePackage + totalAddOnsPrice - payment - discount - deposit + raya;
+
+        // Ensure balance is not NaN or negative
+        if (isNaN(balance) || balance < 0) {
+          balance = 0;
+        }
+
+        document.querySelector("#balanceInput").value = balance.toFixed(2);
+      }
+
+      document.addEventListener("input", function (event) {
+          if (
+              event.target.matches("#paymentInput, #discountInput, #depositInput, #rayaInput") ||
+              event.target.matches("input[name='addon[]']")
+          ) {
+              updateBalance();
+          }
+      });
+
+      document.addEventListener("change", function (event) {
+          if (event.target.matches("#packageInput")) {
+              updateBalance();
+          }
+      });
+
       function showBookingDetails(booking) {
-        console.log("showBookingDetails");
-        console.log(booking);
+        // console.log("showBookingDetails");
+        // console.log(booking);
         let modalTitle = document.getElementById("modalTitle");
         let modalBody = document.getElementById("modalBody");
         let dateRaw = new Date(booking.date); // Convert string to Date object
         const options = { day: "numeric", month: "long", year: "numeric" };
         const formattedDate = dateRaw.toLocaleDateString("en-GB", options);
 
+        console.log('formate date ' + formattedDate);
         // Convert time to 12-hour format with AM/PM
         let formattedTime = formatTimeTo12Hour(booking.time);
+        console.log('formate time ' + formattedTime);
 
+        let formalDate = formatDate(formattedDate);
+        let formalTime= formatTime(formattedTime);
         const packages = {
-            "Pakej A": "Keluarga Kecil Ku (RM90)",
-            "Pakej B": "Keluarga Besar Ku (RM120)",
-            "Pakej C": "Keluarga Bahagia Ku (RM220)",
-            "Pakej D": "Pakej Raya Pertama & Kedua (RM 180)",
-            "Pakej E": "Pakej Raya Pertama & Kedua (RM 280)"
+          "Pakej A": "Keluarga Kecil Ku (RM90)",
+          "Pakej B": "Keluarga Besar Ku (RM120)",
+          "Pakej C": "Keluarga Bahagia Ku (RM220)",
+          "Pakej D": "Pakej Raya Pertama & Kedua (RM 180)",
+          "Pakej E": "Pakej Raya Pertama & Kedua (RM 280)",
         };
 
         const addOns = {
-            "Makeup": "Makeup (RM100)",
-            "Frame A": "Frame 8x12 (RM50)",
-            "Frame B": "Frame 12x18 (RM150)",
-            "Frame C": "Frame 16x24 (RM250)"
+          Makeup: "Makeup (RM100)",
+          "Frame A": "Frame 8x12 (RM50)",
+          "Frame B": "Frame 12x18 (RM150)",
+          "Frame C": "Frame 16x24 (RM250)",
         };
 
         const formatAddOns = (addOnsString) => {
-            if (!addOnsString) return "N/A"; // Handle empty add-ons
+          if (!addOnsString) return "N/A"; // Handle empty add-ons
 
-            return addOnsString
-                .split(", ") // Split by comma and space
-                .map(addOn => addOns[addOn] || addOn) // Map to full name with price (keep unknown ones)
-                .join(", "); // Join back into a readable string
+          return addOnsString
+            .split(", ") // Split by comma and space
+            .map((addOn) => addOns[addOn] || addOn) // Map to full name with price (keep unknown ones)
+            .join(", "); // Join back into a readable string
         };
-
 
         modalTitle.textContent = "Booking Details";
         modalBody.innerHTML = `
-    <p><strong>Date:</strong> ${formattedDate}</p>
-    <p><strong>Time:</strong> ${formattedTime}</p>
-    <p><strong>Name:</strong> ${booking.name || "N/A"}</p>
-    <p><strong>Phone:</strong> ${booking.phone || "N/A"}</p>
-    <p><strong>No IC:</strong> ${booking.noIc || "N/A"}</p>
-    <p><strong>People:</strong> ${booking.people || "N/A"} people</p>
-    <p><strong>Package:</strong> ${packages[booking.package] || "N/A"}</p>
-    <p><strong>Add Ons:</strong> ${formatAddOns(booking.addOns)}</p>
-    <p><strong>Deposit:</strong> RM${booking.deposit || "0.00"}</p>
-    <p><strong>Discount:</strong> RM${booking.discount || "0.00"}</p>
-    <p><strong>Payment:</strong> RM${booking.payment || "0.00"}</p>
-    <p><strong>Balance:</strong> RM${booking.balance || "0.00"}</p>
-    <p><strong>Promoter:</strong> ${booking.promoter || "N/A"}</p>
-    <p><strong>Remarks:</strong> ${booking.remarks || "N/A"}</p>
+    <label><strong>Date:</strong></label>
+    <input type="date" id="dateInput" class="form-control" value="${formalDate}">
+
+    <label><strong>Time:</strong></label>
+    <input type="time" id="timeInput" class="form-control" value="${formalTime}">
+
+    <label><strong>Raya:</strong></label>
+    <input type="number" id="rayaInput" class="form-control" value="${
+      booking.raya || "0"
+    }">
+
+    <label><strong>Name:</strong></label>
+    <input type="text" id="nameInput" class="form-control" value="${
+      booking.name || ""
+    }">
+
+    <label><strong>Phone:</strong></label>
+    <input type="text" id="phoneInput" class="form-control" value="${
+      booking.phone || ""
+    }">
+
+    <label><strong>No IC:</strong></label>
+    <input type="text" id="noIcInput" class="form-control" value="${
+      booking.noIc || ""
+    }">
+
+    <label><strong>People:</strong></label>
+    <input type="number" id="peopleInput" class="form-control" value="${
+      booking.people || ""
+    }">
+
+    <label><strong>Package:</strong></label>
+      <select id="packageInput" class="form-control" required>
+      <option value="" disabled ${
+        !booking.package ? "selected" : ""
+      }>Select a Package</option>
+      <option value="Pakej A" ${
+        booking.package === "Pakej A" ? "selected" : ""
+      }>Pakej A - Kecil Ku ( RM 90 )</option>
+      <option value="Pakej B" ${
+        booking.package === "Pakej B" ? "selected" : ""
+      }>Pakej B - Besar Ku ( RM 120 )</option>
+      <option value="Pakej C" ${
+        booking.package === "Pakej C" ? "selected" : ""
+      }>Pakej C - Bahagia Ku ( RM 220 )</option>
+      <option value="Pakej D" ${
+        booking.package === "Pakej D" ? "selected" : ""
+      }>Pakej D - Pakej Raya Pertama & Kedua ( RM 180 )</option>
+      <option value="Pakej E" ${
+        booking.package === "Pakej E" ? "selected" : ""
+      }>Pakej E - Pakej Raya Pertama & Kedua ( RM 280 )</option>
+    </select>
+
+    <label for="addon" class="form-label"><strong>Add On</strong></label>
+    <div id="addon-options">
+        <label><input type="checkbox" name="addon[]" value="Makeup" data-price="100" ${
+          booking.addOns?.includes("Makeup") ? "checked" : ""
+        }/> Makeup ( RM 100 )</label><br />
+        <label><input type="checkbox" name="addon[]" value="Frame A" data-price="50" ${
+          booking.addOns?.includes("Frame A") ? "checked" : ""
+        }/> Frame 8x12 ( RM 50 )</label><br />
+        <label><input type="checkbox" name="addon[]" value="Frame B" data-price="150" ${
+          booking.addOns?.includes("Frame B") ? "checked" : ""
+        }/> Frame 12x18 ( RM 150 )</label><br />
+        <label><input type="checkbox" name="addon[]" value="Frame C" data-price="250" ${
+          booking.addOns?.includes("Frame C") ? "checked" : ""
+        }/> Frame 16x24 ( RM 250 )</label>
+    </div>
+
+    <label><strong>Deposit (RM):</strong></label>
+    <input type="number" id="depositInput" class="form-control" value="${
+      booking.deposit || "0.00"
+    }">
+
+    <label><strong>Discount (RM):</strong></label>
+    <input type="number" id="discountInput" class="form-control" value="${
+      booking.discount || "0.00"
+    }">
+
+    <label><strong>Payment (RM):</strong></label>
+    <input type="number" id="paymentInput" class="form-control" value="${
+      booking.payment || "0.00"
+    }">
+
+    <label><strong>Balance (RM):</strong></label>
+    <input type="number" id="balanceInput" class="form-control" value="${
+      booking.balance || "0.00"
+    }">
+
+    <label><strong>Promoter:</strong></label>
+    <select id="promoterInput" class="form-control" required>
+      <option value="" disabled ${
+        !booking.promoter ? "selected" : ""
+      }>Select a Promoter</option>
+      <option value="Dayang" ${
+        booking.promoter === "Dayang" ? "selected" : ""
+      }>Dayang</option>
+      <option value="Syafiq" ${
+        booking.promoter === "Syafiq" ? "selected" : ""
+      }>Syafiq</option>
+      <option value="Nurul" ${
+        booking.promoter === "Nurul" ? "selected" : ""
+      }>Nurul</option>
+    </select>
+
+    <label><strong>Remarks:</strong></label>
+    <textarea id="remarksInput" class="form-control">${
+      booking.remarks || ""
+    }</textarea>
 
     <label for="statusSelect"><strong>Status:</strong></label>
-        <select id="statusSelect" class="form-control">
-            <option value="Booked" ${
-              booking.status === "Booked" ? "selected" : ""
-            }>Booked</option>
-            <option value="Called" ${
-              booking.status === "Called" ? "selected" : ""
-            }>Called</option>
-            <option value="Completed" ${
-              booking.status === "Completed" ? "selected" : ""
-            }>Completed</option>
-            <option value="Cancelled" ${
-              booking.status === "Cancelled" ? "selected" : ""
-            }>Cancelled</option>
-        </select>
-        
-        <button class="btn btn-primary mt-3" onclick="updateBookingStatus('${
-          booking.id
-        }')">Update Status</button>
-  `;
+    <select id="statusSelect" class="form-control">
+        <option value="Booked" ${
+          booking.status === "Booked" ? "selected" : ""
+        }>Booked</option>
+        <option value="Called" ${
+          booking.status === "Called" ? "selected" : ""
+        }>Called</option>
+        <option value="Completed" ${
+          booking.status === "Completed" ? "selected" : ""
+        }>Completed</option>
+        <option value="Cancelled" ${
+          booking.status === "Cancelled" ? "selected" : ""
+        }>Cancelled</option>
+    </select>
+    
+    <button class="btn btn-primary mt-3" onclick="updateBooking('${
+      booking.id
+    }')">Update Booking</button>
+`;
 
         let bookingModal = new bootstrap.Modal(
           document.getElementById("bookingModal")
@@ -388,6 +607,22 @@
         let period = hours >= 12 ? "PM" : "AM";
         hours = hours % 12 || 12; // Convert 24-hour to 12-hour format
         return `${hours}:${minutes.toString().padStart(2, "0")} ${period}`;
+      }
+
+      function formatDate(inputDate) {
+          const dateObj = new Date(inputDate);
+          const year = dateObj.getFullYear();
+          const month = String(dateObj.getMonth() + 1).padStart(2, "0"); // Ensure 2 digits
+          const day = String(dateObj.getDate()).padStart(2, "0");
+          return `${year}-${month}-${day}`;
+      }
+
+      // Example: "11:00 AM" -> "11:00" (24-hour format)
+      function formatTime(inputTime) {
+          const timeObj = new Date(`2000-01-01 ${inputTime}`); // Temporary date
+          const hours = String(timeObj.getHours()).padStart(2, "0");
+          const minutes = String(timeObj.getMinutes()).padStart(2, "0");
+          return `${hours}:${minutes}`;
       }
 
       // Fetch bookings from API
@@ -416,6 +651,7 @@
               balance: b.balance, // ✅ Include Payment
               discount: b.discount, // ✅ Include Payment
               remarks: b.remarks, // ✅ Include Payment
+              raya: b.raya, // ✅ Include Payment
             }));
           } else {
             console.error("Failed to fetch bookings");
@@ -517,12 +753,8 @@
 
             // ✅ Check for Rest Periods
             if (
-              (!isWeekend &&
-                (time === "7:00 PM" ||
-                  time === "7:30 PM")) || // Weekday rest
-              (isWeekend &&
-                (time === "7:00 PM" ||
-                  time === "7:30 PM")) // Weekend rest
+              (!isWeekend && (time === "7:00 PM" || time === "7:30 PM")) || // Weekday rest
+              (isWeekend && (time === "7:00 PM" || time === "7:30 PM")) // Weekend rest
             ) {
               cell.textContent = "Rest";
               cell.style.backgroundColor = "#D3D3D3"; // Light Grey
@@ -552,45 +784,77 @@
                 return bookedDate === date && bookedTime === time;
               });
 
-
-              if (booking && booking.status != 'Cancelled') {
+              if (booking && booking.status != "Cancelled") {
                 console.log("Booking Found:", booking);
                 if (booking.status == "Booked") {
                   cell.textContent = "Booked";
                   cell.classList.add("booked");
 
                   // Convert booking.addOns to an array by splitting on ", "
-                  let addOnsArray = typeof booking.addOns === "string" ? booking.addOns.split(", ") : [];
+                  let addOnsArray =
+                    typeof booking.addOns === "string"
+                      ? booking.addOns.split(", ")
+                      : [];
 
                   if (addOnsArray.includes("Makeup")) {
-                      cell.textContent += " + Makeup";
-                      cell.classList.add("Makeup");
+                    cell.textContent += " + Makeup";
+                    cell.classList.add("Makeup");
                   }
 
-                  if (addOnsArray.some(addOn => addOn.toLowerCase().includes("frame"))) {
-                      cell.textContent += " + Frame";
-                      cell.classList.add("Frame");
+                  if (
+                    addOnsArray.some((addOn) =>
+                      addOn.toLowerCase().includes("frame")
+                    )
+                  ) {
+                    cell.textContent += " + Frame";
+                    cell.classList.add("Frame");
                   }
-
                 } else if (booking.status == "Called") {
                   cell.textContent = "Called";
                   cell.classList.add("called");
 
                   // Convert booking.addOns to an array by splitting on ", "
-                  let addOnsArray = typeof booking.addOns === "string" ? booking.addOns.split(", ") : [];
+                  let addOnsArray =
+                    typeof booking.addOns === "string"
+                      ? booking.addOns.split(", ")
+                      : [];
 
                   if (addOnsArray.includes("Makeup")) {
-                      cell.textContent += " + Makeup";
-                      cell.classList.add("Makeup");
+                    cell.textContent += " + Makeup";
+                    cell.classList.add("Makeup");
                   }
 
-                  if (addOnsArray.some(addOn => addOn.toLowerCase().includes("frame"))) {
-                      cell.textContent += " + Frame";
-                      cell.classList.add("Frame");
+                  if (
+                    addOnsArray.some((addOn) =>
+                      addOn.toLowerCase().includes("frame")
+                    )
+                  ) {
+                    cell.textContent += " + Frame";
+                    cell.classList.add("Frame");
                   }
                 } else if (booking.status == "Completed") {
                   cell.textContent = "Completed";
                   cell.classList.add("completed");
+
+                  // Convert booking.addOns to an array by splitting on ", "
+                  let addOnsArray =
+                    typeof booking.addOns === "string"
+                      ? booking.addOns.split(", ")
+                      : [];
+
+                  if (addOnsArray.includes("Makeup")) {
+                    cell.textContent += " + Makeup";
+                    cell.classList.add("Makeup");
+                  }
+
+                  if (
+                    addOnsArray.some((addOn) =>
+                      addOn.toLowerCase().includes("frame")
+                    )
+                  ) {
+                    cell.textContent += " + Frame";
+                    cell.classList.add("Frame");
+                  }
                 } else if (booking.status == "Cancelled") {
                   cell.textContent = "Cancelled";
                   cell.classList.add("cancelled");
