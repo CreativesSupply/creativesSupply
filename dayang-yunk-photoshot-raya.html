@@ -83,6 +83,59 @@
         width: 4rem;
         height: 4rem;
       }
+
+      .loader {
+        width: 48px;
+        height: 48px;
+        position: relative;
+      }
+      .loader::before , .loader::after{
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50% , -50%);
+        width: 48em;
+        height: 48em;
+        background-image:
+          radial-gradient(circle 10px, purple 100%, transparent 0),
+          radial-gradient(circle 10px, purple 100%, transparent 0),
+          radial-gradient(circle 10px, purple 100%, transparent 0),
+          radial-gradient(circle 10px, purple 100%, transparent 0),
+          radial-gradient(circle 10px, purple 100%, transparent 0),
+          radial-gradient(circle 10px, purple 100%, transparent 0),
+          radial-gradient(circle 10px, purple 100%, transparent 0),
+          radial-gradient(circle 10px, purple 100%, transparent 0);
+        background-position: 0em -18em, 0em 18em, 18em 0em, -18em 0em,
+                            13em -13em, -13em -13em, 13em 13em, -13em 13em;
+          background-repeat: no-repeat;
+        font-size: 0.5px;
+        border-radius: 50%;
+        animation: blast 1s ease-in infinite;
+      }
+      .loader::after {
+        font-size: 1px;
+        background: purple;
+        animation: bounce 1s ease-in infinite;
+      }
+
+      @keyframes bounce {
+        0% , 100%{ font-size: 0.75px }
+        50% { font-size: 1.5px }
+      }
+      @keyframes blast {
+        0% , 40% {
+          font-size: 0.5px;
+        }
+        70% {
+          opacity: 1;
+          font-size: 4px;
+        }
+        100% {
+          font-size: 6px;
+          opacity: 0;
+        }
+      }
     </style>
   </head>
   <body>
@@ -92,7 +145,7 @@
       </div>
 
       <div id="loader" class="overlay" style="display: none;">
-        <div class="spinner-grow text-success" role="status">
+        <div class="loader text-success" role="status">
             <span class="sr-only"></span>
         </div>
       </div>
