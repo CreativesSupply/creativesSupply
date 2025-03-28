@@ -36,7 +36,10 @@
       }
     </style>
     <div class="container mt-4">
-      <h2 class="mb-3">Cash Flow - Booking Photoshoot</h2>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Cash Flow - Booking Photoshoot</h2>
+        <button id="exportBtn" class="btn btn-primary">Export to CSV</button>
+      </div>
       <table class="table table-bordered table-striped">
         <thead class="table-dark">
           <tr>
@@ -123,7 +126,7 @@
           "Pakej B": "Keluarga Besar Ku (RM120)",
           "Pakej C": "Keluarga Bahagia Ku (RM220)",
           "Pakej D": "Pakej Raya Pertama & Kedua (RM 180)",
-          "Pakej E": "Pakej Raya Pertama & Kedua (RM 280)"
+          "Pakej E": "Pakej Raya Pertama & Kedua (RM 280)",
         };
 
         const addOns = {
@@ -169,14 +172,12 @@
         bookingModal.show();
       }
 
-
-
       const packages = {
         "Pakej A": "Keluarga Kecil Ku (RM90)",
         "Pakej B": "Keluarga Besar Ku (RM120)",
         "Pakej C": "Keluarga Bahagia Ku (RM220)",
         "Pakej D": "Pakej Raya Pertama & Kedua (RM180)",
-        "Pakej E": "Pakej Raya Pertama & Kedua (RM280)"
+        "Pakej E": "Pakej Raya Pertama & Kedua (RM280)",
       };
 
       const addOns = {
@@ -250,6 +251,8 @@
               return `${String(hours).padStart(2, "0")}:${minutes}`;
             }
 
+          
+
             result.data.sort((a, b) => {
               const dateA = parseDate(a.date);
               const dateB = parseDate(b.date);
@@ -267,6 +270,14 @@
             let totalButik = 0;
             console.log(result.data);
             result.data.forEach((b, index) => {
+
+              let currentYear = new Date().getFullYear(); // Get current year
+              let formattedDateString = `${b.date}-${currentYear}`; // Append year -> "16-Mar-2025"
+
+              let dateRaw = new Date(formattedDateString); // Convert to Date object
+              const options = { day: "numeric", month: "long", year: "numeric" };
+              const formattedDate = dateRaw.toLocaleDateString("en-GB", options);
+
               let packageAmount = extractPrice(packages[b.package] || "RM0");
               let makeupAmount = 0;
               let frameA = 0;
@@ -298,13 +309,14 @@
               let rayaAmount =
                 bookingDate &&
                 bookingDate > new Date(new Date().getFullYear(), 2, 30) &&
-                !(bookingDate.getDate() === 31 && bookingDate.getMonth() === 2) && // Not March 31
+                !(
+                  bookingDate.getDate() === 31 && bookingDate.getMonth() === 2
+                ) && // Not March 31
                 !(bookingDate.getDate() === 1 && bookingDate.getMonth() === 3) // Not April 1
-                    ? b.raya // Use b.raya if it exists, otherwise default to 50
-                    : 0;
+                  ? b.raya // Use b.raya if it exists, otherwise default to 50
+                  : 0;
 
-
-              if(b.id == "ID13"){
+              if (b.id == "ID13") {
                 rayaAmount = 50;
               }
 
@@ -343,11 +355,19 @@
                   frameB +
                   frameC -
                   diskaunPhoto +
-                  (rayaAmount / 2) || 0;
+                  rayaAmount / 2 || 0;
               let butikAmount =
-                splitButik + makeupAmount - diskaunButik + (rayaAmount / 2) || 0;
+                splitButik + makeupAmount - diskaunButik + rayaAmount / 2 || 0;
 
-              let totalAmount = packageAmount + makeupAmount + frameA + frameB + frameC + rayaAmount - diskaunPhoto - diskaunButik;
+              let totalAmount =
+                packageAmount +
+                makeupAmount +
+                frameA +
+                frameB +
+                frameC +
+                rayaAmount -
+                diskaunPhoto -
+                diskaunButik;
 
               // Accumulate totals
               totalBayar += totalAmount;
@@ -364,17 +384,31 @@
                                 )})' style="color: blue; text-decoration: underline;">${
                 b.name
               }</a></td>
-                                <td>${b.date}</td>
+                                <td>${formattedDate}</td>
                                 <td>${b.time}</td>
                                 <td>${b.package}</td>
                                 <td>${packageAmount}</td>
-                                <td class="${(frameA || frameB || frameC) ? 'frame' : ''}">
+                                <td class="${
+                                  frameA || frameB || frameC ? "frame" : ""
+                                }">
                                     ${frameA + frameB + frameC}
                                 </td>
-                                <td class="${makeupAmount !== 0 ? 'makeup' : ''}">${makeupAmount}</td>
-                                <td class="${rayaAmount !== 0 ? 'raya' : ''}">${rayaAmount}</td>
-                                <td class="${b.discount !== 0 && b.discount !== '0.00' ? 'discount' : ''}">
-                                    ${b.discount !== 0 && b.discount !== '0.00' ? `- ${b.discount}` : b.discount}
+                                <td class="${
+                                  makeupAmount !== 0 ? "makeup" : ""
+                                }">${makeupAmount}</td>
+                                <td class="${
+                                  rayaAmount !== 0 ? "raya" : ""
+                                }">${rayaAmount}</td>
+                                <td class="${
+                                  b.discount !== 0 && b.discount !== "0.00"
+                                    ? "discount"
+                                    : ""
+                                }">
+                                    ${
+                                      b.discount !== 0 && b.discount !== "0.00"
+                                        ? `- ${b.discount}`
+                                        : b.discount
+                                    }
                                 </td>
                                 <td>${b.promoter}</td>
                                 <td>${totalAmount}</td>
@@ -405,5 +439,38 @@
 
       document.addEventListener("DOMContentLoaded", fetchBookings);
     </script>
+    <script>
+      function exportToCSV() {
+          let csvContent = "data:text/csv;charset=utf-8,";
+      
+          // Get all rows except the last "Jumlah" row
+          let rows = document.querySelectorAll("table tr");
+          rows.forEach((row, index) => {
+              if (index === rows.length - 1) return; // Skip the last row
+      
+              let rowData = [];
+              let columns = row.querySelectorAll("td, th");
+      
+              columns.forEach((column) => {
+                  rowData.push(`"${column.innerText}"`); // Wrap in quotes to handle commas
+              });
+      
+              csvContent += rowData.join(",") + "\n";
+          });
+      
+          // Create a download link
+          let encodedUri = encodeURI(csvContent);
+          let link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", "2025_photoshot_raya_dybm.csv");
+          document.body.appendChild(link);
+      
+          link.click();
+          document.body.removeChild(link);
+      }
+      
+      // Attach event listener to button
+      document.getElementById("exportBtn").addEventListener("click", exportToCSV);
+      </script>
   </body>
 </html>
