@@ -232,6 +232,7 @@
     <p><strong>People:</strong> ${booking.people || "N/A"} people</p>
     <p><strong>Package:</strong> ${packages[booking.package] || "N/A"}</p>
     <p><strong>Add Ons:</strong> ${formatAddOns(booking.addOns)}</p>
+    <p><strong>Raya:</strong> RM${booking.raya || "0.00"}</p>
     <p><strong>Deposit:</strong> RM${booking.deposit || "0.00"}</p>
     <p><strong>Discount:</strong> RM${booking.discount || "0.00"}</p>
     <p><strong>Payment:</strong> RM${booking.payment || "0.00"}</p>
@@ -477,8 +478,8 @@
                                   makeupAmount !== 0 ? "makeup" : ""
                                 }">${makeupAmount}</td>
                                 <td class="${
-                                  rayaAmount !== 0 ? "raya" : ""
-                                }">${rayaAmount}</td>
+                                  rayaAmount ? "raya" : ""
+                                }">${rayaAmount || "0"}</td>
                                 <td class="${
                                   b.discount !== 0 && b.discount !== "0.00"
                                     ? "discount"
@@ -487,7 +488,7 @@
                                     ${
                                       b.discount !== 0 && b.discount !== "0.00"
                                         ? `- ${b.discount}`
-                                        : b.discount
+                                        : '0'
                                     }
                                 </td>
                                 <td>${b.promoter}</td>
