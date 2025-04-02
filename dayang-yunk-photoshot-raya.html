@@ -370,7 +370,7 @@
         const dateObj = new Date(dateInput);
         const day = dateObj.getDate(); // Get day (7)
         const month = dateObj.toLocaleString("en-US", { month: "long" }); // Get full month (March)
-        const formattedDate = `${day}${month}`; // "7March"
+        const formattedDate = `'${day}${month}`; // "7March"
 
         // ✅ Convert Time to "320PM" format
         const [hours, minutes] = timeInput.split(":");
